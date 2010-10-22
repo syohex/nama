@@ -507,17 +507,22 @@ to_mark: _to_mark ident end {
 #	eval q( $mark->jump_here ) or $debug and print "jump failed: $@\n";
 	1;}
 modify_mark: _modify_mark sign value end {
-	my $newtime = eval($::this_mark->time . $item{sign} . $item{value});
+	my $newtime = eval($::this_mark->{time} . $item{sign} . $item{value});
 	$::this_mark->set( time => $newtime );
 	print $::this_mark->name, ": set to ", ::d2( $newtime), "\n";
-	::eval_iam("setpos $newtime");
+	print "adjusted to ",$::this_mark->time, "\n" 
+		if $::this_mark->time != $newtime;
+	::eval_iam("setpos ".$::this_mark->time);
 	$::regenerate_setup++;
 	1;
 	}
 modify_mark: _modify_mark value end {
 	$::this_mark->set( time => $item{value} );
-	print $::this_mark->name, ": set to ", ::d2( $item{value}), "\n";
-	::eval_iam("setpos $item{value}");
+	my $newtime = $item{value};
+	print $::this_mark->name, ": set to ", ::d2($newtime),"\n";
+	print "adjusted to ",$::this_mark->time, "\n" 
+		if $::this_mark->time != $newtime;
+	::eval_iam("setpos ".$::this_mark->time);
 	$::regenerate_setup++;
 	1;
 	}		

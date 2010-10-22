@@ -287,6 +287,10 @@ stop: _stop end { ::stop_transport(); 1}
 ecasound_start: _ecasound_start end { ::eval_iam("stop"); 1}
 ecasound_stop: _ecasound_stop  end { ::eval_iam("start"); 1}
 show_tracks: _show_tracks end { 	
+	::pager( ::Text::show_tracks (grep{ ! $_-> hide}  ::Track::all() ) );
+	1;
+}
+show_tracks_all: _show_tracks_all end { 	
 	::pager( ::Text::show_tracks ( ::Track::all() ) );
 	1;
 }
@@ -820,7 +824,9 @@ fade_index: dd
  { if ( $::Fade::by_index{$item{dd}} ){ return $item{dd}}
    else { print ("invalid fade number: $item{dd}\n"); return 0 }
  }
-list_fade: _list_fade {  ::pager(join "\n",map{$_->dump} values %::Fade::by_index) }
+list_fade: _list_fade {  ::pager(join "\n",
+		map{ s/^---//; s/...\s$//} map{$_->dump}
+		sort{$a->n <=> $b->n} values %::Fade::by_index) }
 add_comment: _add_comment text { 
  	print $::this_track->name, ": comment: $item{text}\n"; 
  	$::this_track->set(comment => $item{text});

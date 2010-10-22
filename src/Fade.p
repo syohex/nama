@@ -34,11 +34,6 @@ $fade_time2_fraction = 0.1;
 # from 0 to 9, fade from 0 (100%) to -64db
 # from 9 to 10, fade from -64db to -256db
 
-
-# 
-
-
-
 sub next_n {
 	my $n = 1;
 	while( $by_index{$n} ){ $n++}

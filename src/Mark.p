@@ -100,7 +100,7 @@ sub previous {
 
 # -- Class Methods
 
-sub all { sort { $a->time <=> $b->time }@all }
+sub all { sort { $a->{time} <=> $b->{time} }@all }
 
 sub loop_start { 
 	my @points = sort { $a <=> $b } 

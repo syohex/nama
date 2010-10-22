@@ -825,7 +825,7 @@ fade_index: dd
    else { print ("invalid fade number: $item{dd}\n"); return 0 }
  }
 list_fade: _list_fade {  ::pager(join "\n",
-		map{ s/^---//; s/...\s$//} map{$_->dump}
+		map{ s/^---//; s/...\s$//; $_} map{$_->dump}
 		sort{$a->n <=> $b->n} values %::Fade::by_index) }
 add_comment: _add_comment text { 
  	print $::this_track->name, ": comment: $item{text}\n"; 
@@ -856,11 +856,9 @@ new_edit: _new_edit {
 set_edit_points: _set_edit_points { ::set_edit_points(); 1 }
 list_edits: _list_edits { ::list_edits(); 1}
 
-redo_edit: _redo_edit {::redo_edit()}
+destroy_edit: _destroy_edit dd { ::destroy_edit($item{dd}); 1}
 
-destroy_edit: _destroy_edit { ::destroy_edit(); 1}
-
-select_edit: _select_edit { ::select_edit(); 1}
+select_edit: _select_edit dd { ::select_edit($item{dd}); 1}
 
 preview_edit_in: _preview_edit_in { ::preview_edit_in(); 1}
 

@@ -755,14 +755,10 @@ list_edits:
   what: list edits for current track and version
   short: led
   parameters: none
-redo_edit:
-  type: edit
-  what: delete the last edit attempt and start recording again
-  short: red
 select_edit:
   type: edit
   what: select an edit to modify or delete, becomes current edit
-  short: choose_edit ced
+  short: sed
   parameters: <i_edit_index>
 destroy_edit:
   type: edit
@@ -786,7 +782,7 @@ play_edit:
 record_edit:
   type: edit
   what: record a WAV file for the current edit
-  short: ped
+  short: red
   parameters: none
 edit_track:
   type: edit

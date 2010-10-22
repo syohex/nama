@@ -5076,9 +5076,11 @@ sub set_edit_points {
     + record-start
     + record-end
 
-Engine will start in 3 seconds.);
+	say q(Press "Q" to quit.)
+
+Engine will start in 2 seconds.);
 	initialize_edit_points();
- 	$event_id{set_edit_points} = AE::timer(3, 0, 
+ 	$event_id{set_edit_points} = AE::timer(2, 0, 
 	sub {
 		reset_input_line();
 		detect_keystroke_p();
@@ -5110,12 +5112,40 @@ sub generate_edit_record_setup { # for current edit
 
 sub new_edit {
 	#my @edit_points = @_;
+	say("You must use 'set_edit_points' before creating a new edit. Aborting."),
+		return unless @edit_points;
+	my $overlap = grep { 
+		my $fail;
+		my $rst = $_->rec_start_time;
+		my $ret = $_->rec_end_time;
+		my $nst = $edit_points[1];
+		my $net = $edit_points[2];
+		my $rst1 = d1($rst);
+		my $ret1 = d1($ret);
+		my $nst1 = d1($nst);
+		my $net1 = d1($net);
+		say("New rec-start time $nst1 conflicts with Edit ",
+			$_->n, ": $rst1 < $nst1 < $ret1"), $fail++
+		if $rst < $nst and $nst < $ret;
+		say("New rec-end time $net1 conflicts with Edit ",
+			$_->n, ": $rst1 < $net1 < $ret1"), $fail++
+		if $rst < $net and $net < $ret;
+		say("New rec interval $nst1 - $net1 conflicts with Edit ",
+			$_->n, ": $rst1 - $ret1"), $fail++
+		if $nst < $rst and $ret < $net;
+		$fail
+	} grep{ $_->host_track eq $this_track->name} 
+		values %Audio::Nama::Edit::by_name;
+	say("Aborting."), return if $overlap;
 	my $name = $this_track->name;
-	say("$name: sorry, editing of edits is not currently allowed."),
+	my $editre = qr($name-v\d+-edit\d+);
+	say("$name: editing of edits is not currently allowed."),
 		return if $name =~ /-v\d+-edit\d+/;
 	say("$name: must be in MON mode.
 Edits will be applied against current version"), 
-		return unless $this_track->rec_status eq 'MON' ;
+		return unless $this_track->rec_status eq 'MON' 
+			or $this_track->rec_status eq 'REC' and
+			grep{ /$editre/ } keys %::Track::by_name;
 	my $v = $this_track->monitor_version;
 	say "$name: creating new edit against version $v";
 	my $edit = ::Edit->new(
@@ -5125,7 +5155,7 @@ Edits will be applied against current version"),
 	$this_track->current_edit->{$v} = $edit->n;
 	$this_edit = $edit;
 	transfer_edit_points($edit);
-	set_edit_mode();
+	record_edit();
 }
 sub record_edit {
 	set_edit_play_mode();
@@ -5336,5 +5366,22 @@ sub unlink_jack_plumbing_conf {
 sub jack_plumbing_conf {
 	join_path( $ENV{HOME} , '.jack.plumbing' )
 }
+
+sub list_edits {
+	my @edit_data =
+		map{ s/^---//; s/...\s$//; $_ } 
+		map{ $_->dump }
+		sort{$a->n <=> $b->n} 
+		values %::Edit::by_name;
+	pager(@edit_data);
+}
+
+sub select_edit {
+	my $n = shift;
+	($this_edit) = grep{ $_->n == $n } values %::Edit::by_name;
+	set_edit_mode();
+	play_edit();
+}
+	
 
 ### end

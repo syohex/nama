@@ -1970,7 +1970,7 @@ sub previous_mark {
 	my $jumps = shift;
 	$jumps and $jumps--;
 	my $here = eval_iam("getpos");
-	my @marks = sort { $a->time <=> $b->time } @::Mark::all;
+	my @marks = ::Mark::all();
 	for my $i ( reverse 0..$#marks ){
 		if ($marks[$i]->time < $here ){
 			eval_iam("setpos " .  $marks[$i+$jumps]->time);

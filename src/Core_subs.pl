@@ -1936,7 +1936,7 @@ sub drop_mark {
 
 	$ui->marker($mark); # for GUI
 }
-sub mark {
+sub mark { # GUI_CODE
 	$debug2 and print "mark()\n";
 	my $mark = shift;
 	my $pos = $mark->time;
@@ -1955,7 +1955,7 @@ sub next_mark {
 	my $jumps = shift;
 	$jumps and $jumps--;
 	my $here = eval_iam("cs-get-position");
-	my @marks = sort { $a->time <=> $b->time } @::Mark::all;
+	my @marks = ::Mark::all();
 	for my $i ( 0..$#marks ){
 		if ($marks[$i]->time - $here > 0.001 ){
 			$debug and print "here: $here, future time: ",

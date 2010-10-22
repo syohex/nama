@@ -848,29 +848,29 @@ new_edit: _new_edit {
 	1;
 }
 set_edit_points: _set_edit_points { ::set_edit_points(); 1 }
-list_edits: _list_edits { ::list_edits() }
-
-start_edit: _start_edit { ::start_edit() }
+list_edits: _list_edits { ::list_edits(); 1}
 
 redo_edit: _redo_edit {::redo_edit()}
 
-delete_edit: _delete_edit { ::delete_edit() }
+destroy_edit: _destroy_edit { ::destroy_edit(); 1}
 
-select_edit: _select_edit { ::select_edit() }
+select_edit: _select_edit { ::select_edit(); 1}
 
-preview_edit_in: _preview_edit_in { ::preview_edit_in() }
+preview_edit_in: _preview_edit_in { ::preview_edit_in(); 1}
 
-preview_edit_out: _preview_edit_out { ::preview_edit_out() }
+preview_edit_out: _preview_edit_out { ::preview_edit_out(); 1}
 
-hear_edit: _hear_edit { ::hear_edit() }
+play_edit: _play_edit { ::play_edit(); 1}
+
+record_edit: _record_edit { ::record_edit(); 1}
 
 edit_track: _edit_track { 
-	defined $::this_edit and $::this_track = $::tn{$::this_edit->edit_name};
+	defined $::this_edit and $::this_track = $::tn{$::this_edit->edit_name}; 1
 }
 
 host_track: _host_track { 
-	defined $::this_edit and $::this_track = $::tn{$::this_edit->host_track};
-1 }
+	defined $::this_edit and $::this_track = $::tn{$::this_edit->host_track}; 1 
+}
 
 	
 

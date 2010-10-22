@@ -740,7 +740,7 @@ new_edit:
   type: edit
   what: create an edit for the current track and version
   short: ned
-  parameters: hmmm
+  parameters: none
 set_edit_points:
   type: edit
   what: mark play-start, record-start and record-end positions
@@ -751,11 +751,6 @@ list_edits:
   what: list edits for current track and version
   short: led
   parameters: none
-start_edit:
-  type: edit
-  what: start recording an edit (may be repeated)
-  short: sed
-  parameters: none
 redo_edit:
   type: edit
   what: delete the last edit attempt and start recording again
@@ -765,24 +760,29 @@ select_edit:
   what: select an edit to modify or delete, becomes current edit
   short: choose_edit ced
   parameters: <i_edit_index>
-delete_edit:
+destroy_edit:
   type: edit
   what: remove an edit and all associated WAV files (destructive)
   parameters: [<i_edit_index>] (defaults to current edit)
 preview_edit_in:
   type: edit
-  what: play the track region with the edit segment removed
-  short: ped
+  what: play the track region without the edit segment 
+  short: pei
   parameters: none
 preview_edit_out:
   type: edit
   what: play the removed edit segment
-  short: peh
+  short: peo
   parameters: none
-hear_edit:
+play_edit:
   type: edit
-  what: play the completed edit
-  short: hed
+  what: play a completed edit
+  short: ped
+  parameters: none
+record_edit:
+  type: edit
+  what: record a WAV file for the current edit
+  short: ped
   parameters: none
 edit_track:
   type: edit

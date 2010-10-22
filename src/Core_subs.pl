@@ -5110,11 +5110,14 @@ sub generate_edit_record_setup { # for current edit
 
 sub new_edit {
 	#my @edit_points = @_;
-	print($this_track->name, ": must be in MON mode.
-Edits will be applied against current version\n"), return 1
-	unless $this_track->rec_status eq 'MON' ;
+	my $name = $this_track->name;
+	say("$name: sorry, editing of edits is not currently allowed."),
+		return if $name =~ /-v\d+-edit\d+/;
+	say("$name: must be in MON mode.
+Edits will be applied against current version"), 
+		return unless $this_track->rec_status eq 'MON' ;
 	my $v = $this_track->monitor_version;
-	say $this_track->name, ": creating new edit against version ", $v;
+	say "$name: creating new edit against version $v";
 	my $edit = ::Edit->new(
 		host_track 		=> $this_track->name,
 		host_version	=> $v,
@@ -5124,18 +5127,6 @@ Edits will be applied against current version\n"), return 1
 	transfer_edit_points($edit);
 	set_edit_mode();
 }
-sub set_test_marks {
-	::Mark->new(qw(name brass-v49-edit1-play-start time 3));
-	::Mark->new(qw(name brass-v49-edit1-rec-start time 5));
-	::Mark->new(qw(name brass-v49-edit1-rec-end time 9));
-
-}
-sub test_edit {
-	set_test_marks();
-	command_process("new_edit");
-	record_edit();
-}
-
 sub record_edit {
 	set_edit_play_mode();
 	$this_edit->edit_track->set(rw => 'REC');

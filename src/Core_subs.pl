@@ -1761,7 +1761,7 @@ sub start_transport {
 	schedule_wraparound();
 	mute();
 	eval_iam('start');
-	limit_processing_time() if mixing_only();
+	limit_processing_time() if mixing_only() or edit_mode();
  	#$event_id{post_start_unmute} = AE::timer(0.5, 0, sub{unmute()});
 	sleeper(0.5);
 	unmute();
@@ -1866,7 +1866,7 @@ sub cancel_wraparound {
 }
 sub limit_processing_time {
 	my $length = shift // $length;
- 	$event_id{processing_time} = AE::timer($length, 0, sub{ eval_iam("stop")});
+ 	$event_id{processing_time} = AE::timer($length, 0, \&stop_transport);
 }
 sub disable_length_timer {
 	$event_id{processing_time} = undef; 

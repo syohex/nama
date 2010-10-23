@@ -152,10 +152,13 @@ sub fader_envelope_pairs {
 			$marktime2 = $marktime1;
 			$marktime1 -= $fade->duration
 		} else { $fade->dumpp; die "fade processing failed" }
+		say "marktime1: $marktime1";
+		say "marktime2: $marktime2";
 		push @specs, [$marktime1, $marktime2, $fade->type];
 	}
 	# sort fades # already done! XXX
 	@specs = sort{ $a->[0] <=> $b->[0] } @specs;
+	say( ::yaml_out( \@specs));
 
 	# prepend number of pairs, flatten list
 	my @pairs = map{ spec_to_pairs($_) } @specs;

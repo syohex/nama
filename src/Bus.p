@@ -15,9 +15,6 @@ use ::Object qw(
 					name
 					rw
 					version 
-					n	
-
-					destinations
 					send_type
 					send_id
 					class

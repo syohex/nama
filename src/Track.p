@@ -273,20 +273,25 @@ sub rec_status_display {
 
 sub region_start_time {
 	my $track = shift;
-	::Mark::mark_time( $track->region_start )
+	#return if $track->rec_status ne 'MON';
+	carp $track->name, ": expected MON status" if $track->rec_status ne 'MON';
+	::Mark::unadjusted_mark_time( $track->region_start )
 }
 sub region_end_time {
 	my $track = shift;
-	return if $track->rec_status ne 'MON';
+	#return if $track->rec_status ne 'MON';
+	carp $track->name, ": expected MON status" if $track->rec_status ne 'MON';
 	if ( $track->region_end eq 'END' ){
 		return ::wav_length($track->full_path);
 	} else {
-		::Mark::mark_time( $track->region_end )
+		::Mark::unadjusted_mark_time( $track->region_end )
 	}
 }
 sub playat_time {
 	my $track = shift;
-	::Mark::mark_time( $track->playat )
+	carp $track->name, ": expected MON status" if $track->rec_status ne 'MON';
+	#return if $track->rec_status ne 'MON';
+	::Mark::unadjusted_mark_time( $track->playat )
 }
 
 # the following methods adjust
@@ -849,6 +854,9 @@ sub current_version {
 	if 	($status eq 'REC' and ! $track->rec_defeat){ return ++$last}
 	elsif ( $status eq 'MON'){ return $track->monitor_version } 
 	else { return 0 }
+}
+sub playat_time {
+	$_[0]->play_start_time
 }
 }
 

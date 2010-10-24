@@ -417,6 +417,7 @@ length: $length
 type: $type
 reply: $reply);
 		die "illegal return value, stopped" ;
+	};
 	$reply =~ s/\s+$//; 
 
 	given($type){

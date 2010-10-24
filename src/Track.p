@@ -750,7 +750,26 @@ sub version_has_edits {
 	my $edit_trackname = ::Edit::edit_track_search_string($track->name, $version);
 	$::tn{$edit_trackname}
 }	
+{ no warnings 'redefine';
+sub fader {
+	my $track = shift;
 
+	# return existing op_id if it exists
+	
+	my $id = $track->{fader}; 
+	return $id if $id;
+
+	# create a fader
+	
+	my $first_effect = $track->ops->[0];
+	if ( $first_effect ){
+		$id = ::Text::t_insert_effect($first_effect, 'eadb', [0]);
+	} else { 
+		$id = ::Text::t_add_effect('eadb', [0]) 
+	}
+	$track->set(fader => $id);
+}
+}
 =comment
 sub this_edit {
 	my $track = shift;

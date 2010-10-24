@@ -727,6 +727,7 @@ sub initialize_project_data {
 	# print "original marks\n";
 	#print join $/, map{ $_->time} ::Mark::all();
  	::Mark::initialize();
+	::Fade::initialize();
 	@marks_data = ();
 	#print "remaining marks\n";
 	#print join $/, map{ $_->time} ::Mark::all();
@@ -1618,6 +1619,7 @@ sub connect_transport {
 	find_op_offsets(); 
 	eval_iam('cs-connect');
 	apply_ops();
+	#apply_fades();
 	# or say("Failed to connect setup, engine not ready"),return;
 	my $status = eval_iam("engine-status");
 	if ($status ne 'not started'){
@@ -5381,6 +5383,11 @@ sub select_edit {
 	($this_edit) = grep{ $_->n == $n } values %::Edit::by_name;
 	set_edit_mode();
 	play_edit();
+}
+sub apply_fades {
+	my @tracks = ::Graph::graph_tracks($g);
+	say "tracks: @tracks";
+	map{ ::Fade::refresh_fade_controller($_) } map{ $tn{$_} }@tracks
 }
 	
 

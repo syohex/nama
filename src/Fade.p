@@ -18,13 +18,13 @@ use ::Object qw(
 				 track
 				 class
 				 );
-%by_index = ();	# return ref to Mark by name
 $off_level = -256;
 $on_level = 0;
 $fade_down_level = -64;
 $fade_down_fraction = 0.75;
 $fade_time1_fraction = 0.9;
 $fade_time2_fraction = 0.1;
+initialize();
 
 # example
 #
@@ -34,6 +34,7 @@ $fade_time2_fraction = 0.1;
 # from 0 to 9, fade from 0 (100%) to -64db
 # from 9 to 10, fade from -64db to -256db
 
+sub initialize { %by_index = (); }
 sub next_n {
 	my $n = 1;
 	while( $by_index{$n} ){ $n++}
@@ -60,15 +61,6 @@ sub new {
 	# add fader effect at the beginning if needed
 	my $track = $::tn{$object->track};
 	my $id = $track->fader;
-	if( ! $id ){
-		my $first_effect_id = $track->ops->[0];
-		if ( $first_effect_id ){
-			$id = ::Text::t_insert_effect($first_effect_id, 'eadb', [0]);
-		} else { 
-			$id = ::Text::t_add_effect('eadb', [0]) 
-		}
-		$track->set(fader => $id);
-	}
 	# add linear envelope controller -klg if needed
 	
 	refresh_fade_controller($track);
@@ -199,7 +191,7 @@ sub remove_by_index {
 	$fade->remove;
 }
 
-sub remove { # supply index
+sub remove { 
 	my $fade = shift;
 	my $track = $::tn{$fade->track};
 	my $i = $fade->n;

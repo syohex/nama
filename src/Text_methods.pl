@@ -446,3 +446,11 @@ sub bunch {
 	}
 }
 sub add_to_bunch {}
+
+sub remove_fade {
+	my $i = shift;
+	my $fade = $::Fade::by_index{$i}
+		or print("fade index $i not found. Aborting."), return 1;
+	print "removing fade $i from track " .$fade->track ."\n"; 
+	$fade->remove;
+}

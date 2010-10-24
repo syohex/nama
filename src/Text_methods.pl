@@ -312,16 +312,17 @@ sub t_create_project {
 }
 sub t_add_ctrl {
 	package ::;
-	my ($parent, $code, $values) = @_;
+	my ($parent, $code, $values, $id) = @_;
 	if ( $effect_i{$code} ) {} # do nothing
 	elsif ( $effect_j{$code} ) { $code = $effect_j{$code} }
 	else { warn "effect code not found: $code\n"; return }
 	$debug and print "code: ", $code, $/;
 		my %p = (
-				chain => $cops{$parent}->{chain},
-				parent_id => $parent,
-				values => $values,
-				type => $code,
+				chain 		=> $cops{$parent}->{chain},
+				cop_id 		=> $id,
+				parent_id 	=> $parent,
+				values 		=> $values,
+				type 		=> $code,
 			);
 		add_effect( \%p );
 }

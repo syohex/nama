@@ -408,7 +408,15 @@ length: $length
 type: $type
 reply: $reply);
 
-	$return_value == 256 or die "illegal return value, stopped" ;
+	$return_value == 256 or do {
+		say "ECI command: $cmd";
+		say "Ecasound reply (unparsed, 256 bytes max): ", substr($buf,0,256); # first 256 characters
+		say "Parsed results";
+		say qq(return value: $return_value
+length: $length
+type: $type
+reply: $reply);
+		die "illegal return value, stopped" ;
 	$reply =~ s/\s+$//; 
 
 	given($type){
@@ -1618,9 +1626,9 @@ sub connect_transport {
 		or say("Invalid chain setup, engine not ready."),return;
 	find_op_offsets(); 
 	eval_iam('cs-connect');
+		#or say("Failed to connect setup, engine not ready"),return;
 	apply_ops();
-	#apply_fades();
-	# or say("Failed to connect setup, engine not ready"),return;
+	apply_fades();
 	my $status = eval_iam("engine-status");
 	if ($status ne 'not started'){
 		print("Invalid chain setup, cannot connect engine.\n");
@@ -2060,9 +2068,10 @@ sub add_effect {
 		@p{qw( chain type parent_id cop_id parameter values)};
 	my $i = $effect_i{$code};
 
+	# don't create an existing vol or pan effect
+	
 	return if $id and ($id eq $ti{$n}->vol 
-				or $id eq $ti{$n}->pan);   # skip these effects 
-			   								# already created in add_track
+				or $id eq $ti{$n}->pan);   
 
 	$id = cop_add(\%p); 
 	%p = ( %p, cop_id => $id); # replace chainop id
@@ -5385,9 +5394,10 @@ sub select_edit {
 	play_edit();
 }
 sub apply_fades {
-	my @tracks = ::Graph::graph_tracks($g);
-	say "tracks: @tracks";
-	map{ ::Fade::refresh_fade_controller($_) } map{ $tn{$_} }@tracks
+	my @tracks = map{$ti{$_}} keys %is_ecasound_chain;
+	map{ ::Fade::refresh_fade_controller($_) }
+	grep{$_->{fader} }  # only if already exists
+	@tracks
 }
 	
 

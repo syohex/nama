@@ -57,10 +57,10 @@ sub new {
 
 	#print "object class: $class, object type: ", ref $object, $/;
 
+	my $id = add_fader($object->track);	# only when necessary
 	
-	# add fader effect at the beginning if needed
 	my $track = $::tn{$object->track};
-	my $id = $track->fader;
+
 	# add linear envelope controller -klg if needed
 	
 	refresh_fade_controller($track);
@@ -144,13 +144,13 @@ sub fader_envelope_pairs {
 			$marktime2 = $marktime1;
 			$marktime1 -= $fade->duration
 		} else { $fade->dumpp; die "fade processing failed" }
-		say "marktime1: $marktime1";
-		say "marktime2: $marktime2";
+		#say "marktime1: $marktime1";
+		#say "marktime2: $marktime2";
 		push @specs, [$marktime1, $marktime2, $fade->type];
 	}
 	# sort fades # already done! XXX
 	@specs = sort{ $a->[0] <=> $b->[0] } @specs;
-	say( ::yaml_out( \@specs));
+	#say( ::yaml_out( \@specs));
 
 	# prepend number of pairs, flatten list
 	my @pairs = map{ spec_to_pairs($_) } @specs;
@@ -207,6 +207,26 @@ sub remove {
 		$::tn{$fade->track}->set(fader => undef);
 	}
 	else { refresh_fade_controller($track) }
+}
+sub add_fader {
+	my $name = shift;
+	my $track = $::tn{$name};
+
+	my $id = $track->fader;
+
+	# create a fader if necessary
+	
+	if (! $id){	
+		
+		my $first_effect = $track->ops->[0];
+		if ( $first_effect ){
+			$id = ::Text::t_insert_effect($first_effect, 'eadb', [0]);
+		} else { 
+			$id = ::Text::t_add_effect('eadb', [0]) 
+		}
+		$track->set(fader => $id);
+	}
+	$id
 }
 
 1;

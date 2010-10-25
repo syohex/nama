@@ -414,7 +414,6 @@ sub t_add_ctrl {
 			);
 		add_effect( \%p );
 }
-
 sub mixdown {
 	print "Enabling mixdown to file.\n";
 	$tn{Mixdown}->set(rw => 'REC'); 

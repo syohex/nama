@@ -5397,6 +5397,14 @@ sub select_edit {
 	my ($edit) = grep{ $_->n == $n } values %::Edit::by_name;
 	say("Edit $n not found. Skipping."),return if ! $edit;
 	$this_edit = $edit;
+	$this_edit->bus->set(rw => 'REC');
+	my @vals = (
+		rw => 'REC',
+		rec_defeat => 1,
+		source_type => 'bus',
+		source_id	=> undef,
+	);
+	$this_edit->host->set( @vals );
 	set_edit_mode() and play_edit();
 }
 sub apply_fades {

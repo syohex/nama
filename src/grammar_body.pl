@@ -895,4 +895,9 @@ rec_end_mark: _rec_end_mark {
 }
 end_edit_mode: _end_edit_mode { ::end_edit_mode(); 1;}
 
-disable_edits: _disable_edits { ::disable_edits(); 1;}
+disable_edits: _disable_edits { 
+	print("You need to select an edit first (list_edits, select_edit)\n"),
+		return unless defined $::this_edit;
+	$::this_edit->disable_edits; 
+	1;
+}

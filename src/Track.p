@@ -842,8 +842,6 @@ sub AUTOLOAD {
     my ($call) = $AUTOLOAD =~ /([^:]+)$/;
 	$::Edit::by_name{$self->name}->$call(@_);
 }
-sub source_id   { $::tn{$_[0]->host_track}->source_id }
-sub source_type { $::tn{$_[0]->host_track}->source_type }
 sub current_version {	
 	my $track = shift;
 	my $last = $track->last;

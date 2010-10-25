@@ -107,7 +107,7 @@ sub new {
 	#   - we expect to record
 	#   - source_type and source_id come from host track
 	
-	my $edit_track = ::Track->new(
+	my $edit_track = ::EditTrack->new(
 		name		=> $self->edit_name,
 		rw			=> 'REC',
 		source_type => $host->source_type,

@@ -359,8 +359,7 @@ sub input_path { # signal path, not file path
 			# i.e. it gets input from other tracks, not 
 			# the specified source, if any.
 			
-			return () if $track->source_type eq 'bus'
-					  or $track->is_mix_track;
+			return () if $track->source_type eq 'bus';
 
 			( ::input_node($track->source_type) , $track->name)
 	} elsif($track->rec_status eq 'MON' and $::preview ne 'doodle'){

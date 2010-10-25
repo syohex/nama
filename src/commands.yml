@@ -814,4 +814,9 @@ rec_end_mark:
   what: select (and move to) rec end mark
   short: rem
   parameters: none
+edits_are_merged:
+  type: edit
+  short: eam
+  what: disable sub-bus for editing, restore standard track behavior
+  parameters: none
 ...

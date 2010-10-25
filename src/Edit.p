@@ -8,17 +8,10 @@ package ::Edit;
 
 # - I would like to let users adjust edit input source_type/source_id
 #   at the host track
-
-# - But as mix track, the host track is usually set to bus/bus
-# - That information goes only to $track->input_path() 
 #
-# - Solution: new field "is_mix_track"
-# - set when we create bus, clear when remove bus
-
-# - save/recall
-# - new project initializations
-# - region and playat settings
-#
+# - no, that is unnatural
+# - -original track gets copy of host source settings
+# - 'host_track' command will switch to -original track
 
 use Modern::Perl;
 our $VERSION = 1.0;
@@ -86,8 +79,7 @@ sub new {
 
 	# convert host track to mix track
 	
-	my @vals = (is_mix_track => 1,
-				rec_defeat 	=> 1,
+	my @vals = (rec_defeat 	=> 1,
 				rw => 'REC',
 				);
 

@@ -5204,8 +5204,7 @@ sub end_track_edit_magic {
 	# convert host track to mix track
 	
 	my $name = $this_edit->host_track;
-	my @vals = (is_mix_track => 0,
-				rec_defeat 	=> 0,
+	my @vals = (rec_defeat 	=> 0,
 				rw => 'MON',
 				);
 	$::tn{$name}->set( @vals );

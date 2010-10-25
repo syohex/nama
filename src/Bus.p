@@ -89,10 +89,6 @@ sub remove {
 
 	my $mix_track = $::tn{$bus->name};
 	 
-	# restore mix track to allow normal, non-track input
-	
-	$mix_track->set(is_mix_track => 0);
-
 	# remove mix track unless it has some WAV files
 	$mix_track->remove unless scalar @{ $mix_track->versions };
 

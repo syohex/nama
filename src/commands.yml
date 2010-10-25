@@ -796,7 +796,7 @@ edit_track:
   parameters: none
 host_track:
   type: edit
-  what: set host track as current track
+  what: set host track (alias) as the current track
   short: ht
   parameters: none
 play_start_mark:

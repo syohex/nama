@@ -863,11 +863,15 @@ play_edit: _play_edit { ::play_edit(); 1}
 record_edit: _record_edit { ::record_edit(); 1}
 
 edit_track: _edit_track { 
-	defined $::this_edit and $::this_track = $::tn{$::this_edit->edit_name}; 1
+	print("You need to select an edit first (list_edits, select_edit)\n"),
+		return unless defined $::this_edit;
+	$::this_track = $::tn{$::this_edit->edit_name}; 1
 }
 
 host_track: _host_track { 
-	defined $::this_edit and $::this_track = $::tn{$::this_edit->host_track}; 1 
+	print("You need to select an edit first (list_edits, select_edit)\n"),
+		return unless defined $::this_edit;
+	$::this_track = $::tn{$::this_edit->host_alias}; 1 
 }
 
 	

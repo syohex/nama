@@ -1,17 +1,10 @@
 # ----------- Edit ------------
 package ::Edit;
 
-# each edit is uniquely identified by:
+# each edit is identified by:
 #  -  host track name
 #  -  host track version
-#  -  edit index
-
-# - I would like to let users adjust edit input source_type/source_id
-#   at the host track
-#
-# - no, that is unnatural
-# - -original track gets copy of host source settings
-# - 'host_track' command will switch to -original track
+#  -  edit name (i.e. sax-v1) used as key in %by_name
 
 use Modern::Perl;
 our $VERSION = 1.0;
@@ -39,7 +32,11 @@ sub next_n {
 	my ($trackname, $version) = @_;
 	++$n{$trackname}{$version}
 }
-sub edit_index { join ':',@_ }
+
+# this was intended to provide a single index to
+# access/remove edits
+#
+# sub edit_index { join ':',@_ }
 
 sub new {
 	my $class = shift;	
@@ -53,8 +50,8 @@ sub new {
 
 	my $self = bless 
 		{ 
-			n => $n,
-		  	fades => [],
+			n 		=> $n,
+		  	fades 	=> [],
 			@_ 
 		}, $class;
 
@@ -62,8 +59,9 @@ sub new {
 	$by_name{ $self->edit_name } = $self;
 
 	#print "self class: $class, self type: ", ref $self, $/;
-	
+
 	my $name = $self->host_track;
+	my $host = $::tn{$name};
 
 	# get the current version of host_track
 
@@ -72,18 +70,19 @@ sub new {
 	# create the bus
 	
 	::SubBus->new( 
-		name => $name, 
-		send_type => 'bus',
-		send_id	 => $name,
+		name 		=> $host->name, 
+		send_type 	=> 'bus',
+		send_id	 	=> $host->name,
 	);
 
-	# convert host track to mix track
+	# prepare host track to be mix track
 	
-	my @vals = (rec_defeat 	=> 1,
-				rw => 'REC',
-				);
+	my @vals = (
+		rec_defeat 	=> 1,
+		rw 			=> 'REC',
+	);
 
-	$::tn{$name}->set( @vals );
+	$host->set( @vals );
 
 	# create host track alias if necessary
 
@@ -94,24 +93,26 @@ sub new {
 	#
 	#  The easiest way may be to subclass the 'set' routine
 	
-	my $host_track_alias = ::Track->new(
-		name 	=> $self->host_alias,
-		version => $::tn{$self->host_track}->monitor_version,
-		target  => $self->host_track,
-		rw		=> 'MON',
-		group   => $self->host_track, # bus affiliation
-	) 
-		unless $::tn{$self->host_alias};
+	my $host_track_alias = $::tn{$self->host_alias} // 
+		::Track->new(
+			name 	=> $self->host_alias,
+			version => $host->monitor_version, # should not be changed!
+			target  => $host->name,
+			rw		=> 'MON',
+			group   => $self->host_track, # bus affiliation
+		);
 
 	# create edit track
 	#   - same name as edit
 	#   - we expect to record
 	#   - source_type and source_id come from host track
 	
-	my $edit_track = ::EditTrack->new(
-		name	=> $self->edit_name,
-		rw		=> 'REC',
-		group	=> $self->host_track, # bus affiliation
+	my $edit_track = ::Track->new(
+		name		=> $self->edit_name,
+		rw			=> 'REC',
+		source_type => $host->source_type,
+		source_id	=> $host->source_id,
+		group		=> $self->host_track, # bus affiliation
 	); 
 	$self
 }

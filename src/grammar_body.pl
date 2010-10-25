@@ -885,3 +885,5 @@ rec_end_mark: _rec_end_mark {
 	$::this_edit->rec_end_mark->jump_here; 1;
 }
 end_edit_mode: _end_edit_mode { ::end_edit_mode(); 1;}
+
+disable_edits: _disable_edits { ::disable_edits(); 1;}

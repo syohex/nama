@@ -873,6 +873,11 @@ host_track: _host_track {
 		return unless defined $::this_edit;
 	$::this_track = $::tn{$::this_edit->host_alias}; 1 
 }
+edit_mix_track: _edit_mix_track { 
+	print("You need to select an edit first (list_edits, select_edit)\n"),
+		return unless defined $::this_edit;
+	$::this_track = $::tn{$::this_edit->host_track}; 1 
+}
 
 	
 

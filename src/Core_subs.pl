@@ -1480,6 +1480,7 @@ sub set_doodle_mode {
 	print "Using live inputs only, with no duplicate inputs\n";
 	print "Exit using 'preview' or 'arm' commands.\n";
 }
+{ my $old_edit_mode;
 sub reconfigure_engine {
 	$debug2 and print "&reconfigure_engine\n";
 
@@ -1522,9 +1523,11 @@ sub reconfigure_engine {
 	#  - change in global version (TODO)
 	#  - change in project
 	#  - new setup involves recording
+	#  - change in edit mode
 	
 	if ( 	$preview eq 'doodle' 
 		 or $old_snapshot->{project} ne $project_name
+		 or $edit_mode != $old_edit_mode
 		# TODO: or change in global version
 	){} # do nothing
 	else
@@ -1540,6 +1543,7 @@ sub reconfigure_engine {
 	}
 
 	$old_snapshot = status_snapshot();
+	$old_edit_mode = $edit_mode;
 
 	command_process('show_tracks');
 
@@ -1558,6 +1562,7 @@ sub reconfigure_engine {
 		transport_status();
 		$ui->flash_ready;
 	}
+}
 }
 sub setup_file { join_path( project_dir(), $chain_setup_file) };
 
@@ -5390,9 +5395,10 @@ sub list_edits {
 
 sub select_edit {
 	my $n = shift;
-	($this_edit) = grep{ $_->n == $n } values %::Edit::by_name;
-	set_edit_mode();
-	play_edit();
+	my ($edit) = grep{ $_->n == $n } values %::Edit::by_name;
+	say("Edit $n not found. Skipping."),return if ! $edit;
+	$this_edit = $edit;
+	set_edit_mode() and play_edit();
 }
 sub apply_fades {
 	my @tracks = map{$ti{$_}} keys %is_ecasound_chain;

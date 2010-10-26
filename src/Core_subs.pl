@@ -4686,8 +4686,22 @@ sub complete_caching {
 	} else { say "track cache operation failed!"; }
 }
 sub merge_edits {
-	($track, $additional_time) = @_;
 
+	# maybe we are on an edit track or host alias track
+	
+	# so we will try to merge edits for a track that is the same
+	# name as the current bus, unless the current bus is
+	# a system bus
+	
+	$additional_time = 0; # needed only for effect caching
+
+	my $track = $this_track; 
+
+	# try to improve it if we can
+
+	$track = $tn{$this_bus} 
+		unless grep{ $this_bus eq $_ } qw(Main Master Mixdown);
+	
 	# make sure the system is in a suitable state
 	
 	# - track has edits
@@ -4702,8 +4716,12 @@ sub merge_edits {
 		return if $track->has_insert;
 
 	say($track->name, ": edits are not enabled. Select an edit for this track 
-and version try again. Aborting"), return 
+and version and try again. Aborting"), return 
 		unless $track->edits_enabled;
+
+	my $bus = $::Bus::by_name{$track->name};
+
+	$bus->set(rw => 'MON'); # no edits of edits
 	
 	# we are good to go
 	
@@ -4712,6 +4730,8 @@ and version try again. Aborting"), return
 	end_edit_mode(); # possibly set by select_edit
 
 	# push effects off track	
+	
+	push_effects_chain($this_track, ops  => $this_track->ops);  # all of them
 
 	prepare_to_cache();
 	cache_engine_run();

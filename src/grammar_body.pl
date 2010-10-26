@@ -896,8 +896,32 @@ rec_end_mark: _rec_end_mark {
 end_edit_mode: _end_edit_mode { ::end_edit_mode(); 1;}
 
 disable_edits: _disable_edits { 
-	print("You need to select an edit first (list_edits, select_edit)\n"),
-		return unless defined $::this_edit;
-	$::this_edit->disable_edits; 
+	
+	# if we are on a host track, host alias or edit track
+	# the current bus will be the name of the host track
+	
+	my $host = $::tn{$::this_bus};
+	defined $host or print($::this_track->name,": edits not enabled.\n"), return 1;
+
+	# turn off bus (and all edit tracks)
+	
+	my $bus = $::Bus::by_name{$::this_bus};
+	$bus->set(rw => 'OFF');
+
+	my $edit = $::this_edit;
+
+	# reset host track, copying back source settings if possible
+	
+	$host->set(
+		rw 			=> 'MON',
+		rec_defeat	=> 0,
+		source_type => (defined $edit 
+			? $edit->edit_track->source_type
+			: 'soundcard'),
+		source_id 	=> (defined $edit 
+			? $edit->edit_track->source_id
+			: 1),
+	);
+	::end_edit_mode();
 	1;
 }

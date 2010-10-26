@@ -4426,6 +4426,7 @@ sub push_effect_chain {
 	map{ remove_effect($_)} @ops;
 
 	# return name
+
 	$save_name;
 }
 

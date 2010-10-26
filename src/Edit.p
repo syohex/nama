@@ -172,18 +172,6 @@ sub marktime {
 	$::Mark::by_name{$self->$markfield}->{time}
 }
 
-sub is_active {
-	my $self = shift;
-
-	# the host track's current version must match
-	# the version the Edit object applies to
-	
-	# however the host track 'sax' will be made into a bus
-	# and the original WAV will be offered through
-	# 'sax-v3-original'
-	
-	#$::tn{$self->host_track}->current_version == $self->host_version
-}
 sub store_fades { # replacing previous
 	my $edit = shift;
 	my @fades = @_;

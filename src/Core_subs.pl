@@ -3491,8 +3491,16 @@ sub restore_state {
 		map{ 
 			delete $_->{active};
 			delete $_->{inserts};
-			 delete $_->{prefader_insert};
-			 delete $_->{postfader_insert};
+			delete $_->{prefader_insert};
+			delete $_->{postfader_insert};
+			
+			# eliminate field is_mix_track
+			if ($_->{is_mix_track} ){
+				 $_->{source_type} = 'bus';
+				 $_->{source_id}   = undef;
+			}
+			delete $_->{is_mix_track};
+
  		} @tracks_data;
 	}
 

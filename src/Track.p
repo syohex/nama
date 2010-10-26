@@ -742,13 +742,21 @@ sub bus_tree { # for solo function to work in sub buses
 }
 
 sub version_has_edits { 
-	# true if exists track 'sax-v6-edit1'
-	# false if *-edit1 is deleted for some reason
-	my $track = shift;
-	my $version = shift;
-	my $edit_trackname = ::Edit::edit_track_search_string($track->name, $version);
-	$::tn{$edit_trackname}
+	my ($track) = @_;
+	grep
+		{ 		$_->host_track eq $track->name
+     		and $_->host_version == $track->monitor_version
+		} values %::Edit::by_name;
 }	
+sub edits_enabled {
+	my $track = shift;
+	my $bus;
+	$bus = $::Bus::by_name{$track->name}
+	and $bus->rw ne 'OFF'
+	and $track->rec_status eq 'REC' 
+	and $track->rec_defeat
+	and $track->source_type eq 'bus'
+}
 =comment
 sub this_edit {
 	my $track = shift;

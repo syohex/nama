@@ -4391,12 +4391,13 @@ sub profile_effect_chain_name {
 sub push_effect_chain {
 	$debug2 and say "&push_effect_chain";
 	my ($track, %vals) = @_; 
-	say("no effects to store"), return unless $track->fancy_ops;
+	my @ops = $vals{ops} ? @{$vals{ops}} : $track->fancy_ops;
+	say("no effects to store"), return unless @ops;
 	my $save_name   = $vals{save} || private_effect_chain_name();
 	$debug and say "save name: $save_name"; 
 	new_effect_chain( $track, $save_name ); # current track effects
 	push @{ $track->effect_chain_stack }, $save_name;
-	map{ remove_effect($_)} $track->fancy_ops;
+	map{ remove_effect($_)} @ops;
 	$save_name;
 }
 
@@ -4667,13 +4668,40 @@ sub complete_caching {
 	} else { say "track cache operation failed!"; }
 }
 sub merge_edits {
-	# abort with warning if inserts present
-	# push effect_chains (including vol/pan)
-	# cache
+	($track, $additional_time) = @_;
+
+	# make sure the system is in a suitable state
+	
+	# - track has edits
+	# - track doesn't have inserts
+	# - bus and track settings are correct
+	
+	say($track->name, ": version ", $track->monitor_version,
+	"has no edits to merge. Aborting."), return
+		unless $track->version_has_edits;
+
+	say($track->name, ": has inserts. Remove them and try again. Aborting."),
+		return if $track->has_insert;
+
+	say($track->name, ": edits are not enabled. Select an edit for this track 
+and version try again. Aborting"), return 
+		unless $track->edits_enabled;
+	
+	# we are good to go
+	
+	say $track->name, ": preparing to merge edits.";
+
+	end_edit_mode(); # possibly set by select_edit
+
+	# push effects off track	
+
+	prepare_to_cache();
+	cache_engine_run();
+
 	# restore effects_chain
 	# make sure version, rw settings correct
 	# possibly store comments
-	# warn user about editing if already a cached track
+	
 }
 sub complete_merge_edits {
 	my $track = shift;
@@ -5412,16 +5440,21 @@ sub select_edit {
 	my $n = shift;
 	my ($edit) = grep{ $_->n == $n } values %::Edit::by_name;
 	say("Edit $n not found. Skipping."),return if ! $edit;
+	say( qq(Edit $n applies to track "), $edit->host_track, 
+		 qq(" version ), $edit->host_version, ".
+This does does not match the track's current monitor version,
+which is: ", $edit->host->monitor_version, ". Aborting."), return
+		if $edit->host->monitor_version != $edit->host_version;
 	$this_edit = $edit;
-	$this_edit->bus->set(rw => 'REC');
+	$edit->bus->set(rw => 'REC');
 	my @vals = (
 		rw => 'REC',
 		rec_defeat => 1,
 		source_type => 'bus',
 		source_id	=> undef,
 	);
-	$this_edit->host->set( @vals );
-	set_edit_mode() and play_edit();
+	$edit->host->set( @vals );
+	set_edit_mode() and play_edit(); # should select_edit do this?
 }
 sub apply_fades {
 	my @tracks = map{$ti{$_}} keys %is_ecasound_chain;

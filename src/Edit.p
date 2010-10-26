@@ -213,10 +213,10 @@ sub bus { $::Bus::by_name{$_[0]->host_track} }
 	#delete $by_index{$i};
 
 #}
-sub edit_track_search_string {
-	my ($name, $version) = @_;
-	join '-',$name,'v'.$version,'edit1'
-}
+# sub edit_track_search_string {
+# 	my ($name, $version) = @_;
+# 	join '-',$name,'v'.$version,'edit'
+# }
 sub disable_edits {
 	my $edit = shift;
 

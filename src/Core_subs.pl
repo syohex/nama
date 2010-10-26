@@ -4542,7 +4542,10 @@ sub cleanup_exit {
 # some common variables for cache_track and merge_track
 # related routines
 
-{ my ($track, $additional_time, $processing_time, $orig_version, $cooked);
+{ # begin shared lexicals for cache_track and merge_edits
+
+	my ($track, $additional_time, $processing_time, $orig_version, $cooked);
+
 sub cache_track { # launch subparts if conditions are met
 	($track, $additional_time) = @_;
 	say $track->name, ": preparing to cache.";
@@ -4568,6 +4571,8 @@ sub cache_track { # launch subparts if conditions are met
 }
 
 sub prepare_to_cache {
+	# uses shared lexicals
+	
  	initialize_chain_setup_vars();
 	$orig_version = $track->monitor_version;
 
@@ -4621,6 +4626,8 @@ sub prepare_to_cache {
 	remove_temporary_tracks();
 }
 sub cache_engine_run {
+	# uses shared lexicals
+	
 	connect_transport('quiet')
 		or say ("Couldn't connect engine! Aborting."), return;
 	$processing_time = $length + $additional_time;
@@ -4641,6 +4648,8 @@ sub cache_engine_run {
 	# It is triggered by stop_polling_cache_progress()
 }
 sub complete_caching {
+	# uses shared lexicals
+	
 	my $name = $track->name;
 	my @files = grep{/$name/} new_files_were_recorded();
 	if (@files ){ 
@@ -4686,6 +4695,7 @@ sub complete_caching {
 	} else { say "track cache operation failed!"; }
 }
 sub merge_edits {
+	# uses shared lexicals
 
 	# maybe we are on an edit track or host alias track
 	
@@ -4695,7 +4705,7 @@ sub merge_edits {
 	
 	$additional_time = 0; # needed only for effect caching
 
-	my $track = $this_track; 
+	$track = $this_track; 
 
 	# try to improve it if we can
 
@@ -4742,7 +4752,8 @@ and version and try again. Aborting"), return
 	
 }
 sub complete_merge_edits {
-	my $track = shift;
+	# uses shared lexicals
+	
 	my $name = $track->name;
 	my @files = grep{/$name/} new_files_were_recorded();
 	if (@files ){ 
@@ -4789,7 +4800,8 @@ sub stop_polling_cache_progress {
 	complete_caching();
 }
 
-}
+} # end shared lexicals for cache_track and merge_edits
+
 sub uncache_track { 
 	my $track = shift;
 	# skip unless MON;

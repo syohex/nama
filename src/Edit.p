@@ -203,35 +203,5 @@ sub edit_track 		{ $::tn{$_[0]->edit_name} }
 sub bus { $::Bus::by_name{$_[0]->host_track} }
 
 # utility routines
-
-#sub remove { # supply index
-	#my $i = shift;
-	#my $edit = $by_index{$i};
-	#my $track = $::tn{$edit->track};
-	
-	# remove object from index
-	#delete $by_index{$i};
-
-#}
-# sub edit_track_search_string {
-# 	my ($name, $version) = @_;
-# 	join '-',$name,'v'.$version,'edit'
-# }
-sub disable_edits {
-	my $edit = shift;
-
-	# turn off bus (and all edit tracks)
-	$edit->bus->set(rw => 'OFF');
-
-	# reset host track, copying back source settings
-	
-	$edit->host->set(
-		rw 			=> 'MON',
-		rec_defeat	=> 0,
-		source_type => $edit->edit_track->source_type,
-		source_id 	=> $edit->edit_track->source_id,
-	);
-	::end_edit_mode();
-}
 1;
 

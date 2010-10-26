@@ -4551,28 +4551,44 @@ sub cache_track { # launch subparts if conditions are met
 sub prepare_to_cache {
  	initialize_chain_setup_vars();
 	$orig_version = $track->monitor_version;
+
+	# create a temporary track to represent the output file
+	
 	my $cooked_name = $track->name . '_cooked';
 	my $cooked = ::CacheRecTrack->new(
 		name => $cooked_name,
 		group => 'Temp',
 		target => $track->name,
 	);
-	# output path
+
+	# connect the temporary track's output path
+	
 	$g->add_path($track->name, $cooked->name, 'wav_out');
 
-	# input path when $track->rec_status MON
-	$g->add_path('wav_in',$track->name) if $track->rec_status eq 'MON';
+	# set the correct output parameters in the graph
+	
 	$g->set_vertex_attributes(
 		$cooked->name, 
 		{ format => signal_format($cache_to_disk_format,$cooked->width),
 		}
 	); 
 
-	$debug and say "The graph is:\n$g";
+	# Case 1: Caching a standard track
+	
+	# set the original track to read the WAV file
+	
+	$g->add_path('wav_in',$track->name) if $track->rec_status eq 'MON';
+	$debug and say "The graph0 is:\n$g";
+	
 
-	# input paths: sub buses (significant when
-	# $track->rec_status is REC and track is a sub-bus mix track)
-	map{ $_->apply() } grep{ (ref $_) =~ /Sub/ } ::Bus::all();
+	# Case 2: Caching a sub-bus mix track
+
+	# apply all sub-buses (unneeded ones will be pruned from the graph)
+	
+	map{ $_->apply() } 
+	grep{ (ref $_) =~ /Sub/ } 
+	::Bus::all()
+		if $track->rec_status eq 'REC';
 
 	$debug and say "The graph1 is:\n$g";
 	prune_graph();

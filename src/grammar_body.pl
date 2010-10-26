@@ -424,7 +424,7 @@ mute: _mute end { $::this_track->mute; 1}
 
 unmute: _unmute end { $::this_track->unmute; 1}
 # solo: _solo 'bus' track_name {
-# 	print ("$item{track_name}: Expected bus track_name. Skipping.\n"), return 1
+# 	print("$item{track_name}: Expected bus track_name. Skipping.\n"), return 1
 # 		unless $::Bus::by_name{$item{track_name}};
 # 	::command_process("for all; off;; $item{track_name} mon");
 # 	1;
@@ -684,10 +684,10 @@ set_insert_wetness: _set_insert_wetness prepost(?) parameter end {
 	my $id = ::Insert::get_id($::this_track,$prepost);
 	print($::this_track->name.  ": Missing or ambiguous insert. Skipping\n"), 
 		return 1 unless $id;
-	print ("wetness parameter must be an integer between 0 and 100\n"), 
+	print("wetness parameter must be an integer between 0 and 100\n"), 
 		return 1 unless ($p <= 100 and $p >= 0);
 	my $i = $::Insert::by_index{$id};
-	print ("track '",$::this_track->n, "' has no insert.  Skipping.\n"),
+	print("track '",$::this_track->n, "' has no insert.  Skipping.\n"),
 		return 1 unless $i;
 	$i->{wetness} = $p;
 	::modify_effect($i->wet_vol, 0, undef, $p);
@@ -759,7 +759,7 @@ bunch_name: ident {
 
 effect_profile_name: ident
 existing_effect_profile_name: ident {
-	print ("$item{ident}: no such effect profile\n"), return
+	print("$item{ident}: no such effect profile\n"), return
 		unless $::effect_profile{$item{ident}};
 	$item{ident}
 }
@@ -816,7 +816,7 @@ remove_fade: _remove_fade fade_index(s)  {
 }
 fade_index: dd 
  { if ( $::Fade::by_index{$item{dd}} ){ return $item{dd}}
-   else { print ("invalid fade number: $item{dd}\n"); return 0 }
+   else { print("invalid fade number: $item{dd}\n"); return 0 }
  }
 list_fade: _list_fade {  ::pager(join "\n",
 		map{ s/^---//; s/...\s$//; $_} map{$_->dump}

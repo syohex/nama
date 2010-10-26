@@ -284,7 +284,7 @@ sub t_load_project {
 	print "input name: $name\n";
 	my $newname = remove_spaces($name);
 	$newname =~ s(/$)(); # remove trailing slash
-	print ("Project $newname does not exist\n"), return
+	print("Project $newname does not exist\n"), return
 		unless -d join_path(project_root(), $newname);
 	stop_transport();
 	if(my $savefile = autosave()){
@@ -316,9 +316,9 @@ sub t_insert_effect {
 	say ("$code: unknown effect. Skipping.\n"), return if ! effect_code($code);
 	$code = effect_code( $code );	
 	my $running = engine_running();
-	print ("Cannot insert effect while engine is recording.\n"), return 
+	print("Cannot insert effect while engine is recording.\n"), return 
 		if $running and ::really_recording;
-	print ("Cannot insert effect before controller.\n"), return 
+	print("Cannot insert effect before controller.\n"), return 
 		if $cops{$before}->{belongs_to};
 
 	if ($running){
@@ -395,7 +395,7 @@ sub t_add_effect {
 			type => $code,
 			);
 			#print "adding effect\n";
-			$debug and print (yaml_out(\%p));
+			$debug and print(yaml_out(\%p));
 		add_effect( \%p );
 }
 sub t_add_ctrl {

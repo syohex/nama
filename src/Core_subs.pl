@@ -15,7 +15,7 @@ sub prepare {
 	$project_name = shift @ARGV;
 	$debug and print "project name: $project_name\n";
 
-	$debug and print ("\%opts\n======\n", yaml_out(\%opts)); ; 
+	$debug and print("\%opts\n======\n", yaml_out(\%opts)); ; 
 
 
 	read_config(global_config());  # from .namarc if we have one
@@ -182,7 +182,7 @@ sub first_run {
 
 	my $missing;
 	my @a = `which analyseplugin`;
-	@a or print ( <<WARN
+	@a or print( <<WARN
 LADSPA helper program 'analyseplugin' not found
 in $ENV{PATH}, your shell's list of executable 
 directories. You will probably have more fun with the LADSPA
@@ -190,7 +190,7 @@ libraries and executables installed. http://ladspa.org
 WARN
 	) and  sleeper (0.6) and $missing++;
 	my @b = `which ecasound`;
-	@b or print ( <<WARN
+	@b or print( <<WARN
 Ecasound executable program 'ecasound' not found
 in $ENV{PATH}, your shell's list of executable 
 directories. This suite depends on the Ecasound
@@ -203,7 +203,7 @@ Do you want to continue? [N] ";
 	$missing and 
 	my $reply = <STDIN>;
 	chomp $reply;
-	print ("Goodbye.\n"), exit unless $reply =~ /y/i;
+	print("Goodbye.\n"), exit unless $reply =~ /y/i;
 	}
 print <<HELLO;
 
@@ -491,7 +491,7 @@ sub global_config {
 	# 3. .namarc in the home directory, i.e. ~/.namarc
 	# 4. .namarc in the project root directory, i.e. ~/nama/.namarc
 	if( $opts{f} ){
-		print ("reading config file $opts{f}\n");
+		print("reading config file $opts{f}\n");
 		return read_file($opts{f});
 	}
 	my @search_path = (project_dir(), $ENV{HOME}, project_root() );
@@ -563,7 +563,7 @@ sub load_project {
 	$debug2 and print "&load_project\n";
 	my %h = @_;
 	$debug and print yaml_out \%h;
-	print ("no project name.. doing nothing.\n"),return 
+	print("no project name.. doing nothing.\n"),return 
 		unless $h{name} or $project;
 	$project_name = $h{name} if $h{name};
 
@@ -1506,11 +1506,11 @@ sub reconfigure_engine {
 		my $current = yaml_out(status_snapshot());
 		my $old = yaml_out($old_snapshot);
 		if ( $current eq $old){
-				$debug and print ("no change in setup\n");
+				$debug and print("no change in setup\n");
 				return;
 		}
 	}
-	$debug and print ("setup change\n");
+	$debug and print("setup change\n");
 
  	my $old_pos;
  	my $was_running;
@@ -3047,7 +3047,7 @@ sub integrate_ladspa_hints {
 	$debug2 and print "&integrate_ladspa_hints\n";
 	map{ 
 		my $i = $effect_i{$_};
-		# print ("$_ not found\n"), 
+		# print("$_ not found\n"), 
 		if ($i) {
 			$effects[$i]->{params} = $effects_ladspa{$_}->{params};
 			# we revise the number of parameters read in from ladspa-register

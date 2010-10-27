@@ -386,7 +386,9 @@ our (
 	%is_ecasound_chain,   # suitable for c-select
 	
 	%wav_info,			# caches path/length/format/modify-time
+	
 	$autosave_interval, # how frequently to save
+	$quietly_remove_tracks, 
 
 	# MIDI
 	

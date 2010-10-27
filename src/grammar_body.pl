@@ -304,6 +304,16 @@ show_tracks_all: _show_tracks_all end {
 	::pager( ::Text::show_tracks ( ::Track::all() ) );
 	1;
 }
+show_bus_tracks: _show_bus_tracks end { 	
+	::pager(::Text::show_tracks(
+		map{$::tn{$_}}grep{$_ ne 'Main'}
+		(   'Master',
+			$::this_bus, 
+			$::Bus::by_name{$::this_bus}->tracks 
+		)
+	));
+	1;
+}
 modifiers: _modifiers modifier(s) end {
  	$::this_track->set(modifiers => (join q(,),
 	@{$item{"modifier(s)"}}, q() ));

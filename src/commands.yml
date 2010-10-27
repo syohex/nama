@@ -275,6 +275,10 @@ show_tracks_all:
   type: track
   short: sta
   what: show status of all tracks, including hidden tracks
+show_bus_tracks:
+  type: track 
+  short: shb
+  what: show tracks in current bus
 show_track:
   type: track
   short: sh

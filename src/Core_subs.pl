@@ -3822,8 +3822,10 @@ sub ecasound_select_chain {
 }
 sub set_current_bus {
 	my $track = shift || ($this_track ||= $tn{Master});
-	if( $track->name =~ /Master|Mixdown/){ $this_bus = 'Main' }
-	elsif( $::Bus::by_name{$track->name} ){$this_bus = $track->name }
+	if( $track->name =~ /Master|Mixdown/)
+		 { $this_bus = 'Main' }
+	elsif( $::Bus::by_name{$track->name} and $track->source_type eq 'bus' )
+		 { $this_bus = $track->name }
 	else { $this_bus = $track->group }
 }
 sub eval_perl {
@@ -4552,7 +4554,12 @@ sub cleanup_exit {
 
 { # begin shared lexicals for cache_track and merge_edits
 
-	my ($track, $additional_time, $processing_time, $orig_version, $cooked);
+	my ($track, 
+		$additional_time, 
+		$processing_time, 
+		$orig_version, 
+		$cooked,
+		$complete_caching_ref);
 
 sub cache_track { # launch subparts if conditions are met
 	($track, $additional_time) = @_;
@@ -4573,6 +4580,7 @@ sub cache_track { # launch subparts if conditions are met
 				or $track->has_insert
 				or $::Bus::by_name{$track->name};
 
+	$complete_caching_ref = \&update_cache_map;
 	prepare_to_cache();
 	cache_engine_run();
 
@@ -4633,9 +4641,8 @@ sub prepare_to_cache {
 	write_chains();
 	remove_temporary_tracks();
 }
-sub cache_engine_run {
-	# uses shared lexicals
-	
+sub cache_engine_run { # uses shared lexicals
+
 	connect_transport('quiet')
 		or say ("Couldn't connect engine! Aborting."), return;
 	$processing_time = $length + $additional_time;
@@ -4661,6 +4668,14 @@ sub complete_caching {
 	my $name = $track->name;
 	my @files = grep{/$name/} new_files_were_recorded();
 	if (@files ){ 
+		
+		&$complete_caching_ref; # update cache map 
+		post_cache_processing();
+
+	} else { say "track cache operation failed!"; }
+}
+sub update_cache_map {
+
 		$debug and say "updating track cache_map";
 		#say "cache map",yaml_out($track->cache_map);
 		my $cache_map = $track->cache_map;
@@ -4681,11 +4696,20 @@ sub complete_caching {
 				@inserts;
 		}
 		#say "cache map",yaml_out($track->cache_map);
-		say qq(Saving effects for cached track "$name".
-'uncache' will restore effects and set version $orig_version\n);
+		say qq(Saving effects for cached track "), $track->name, '".';
+		say qq('uncache' will restore effects and set version $orig_version\n);
+}
+
+sub post_cache_processing {
+
+		# only two differences in processing here
+		#
+		# - regular track: set all buses  to MON
+		# - mix track:     set track only to MON
+		
 
 		# special handling for sub-bus mix track
-		
+	
 		if ($track->rec_status eq 'REC')
 		{ 
 			$track->set(rw => 'MON');
@@ -4700,22 +4724,29 @@ sub complete_caching {
 		reconfigure_engine();
 		revise_prompt("default"); 
 
-	} else { say "track cache operation failed!"; }
 }
 sub merge_edits {
-	# uses shared lexicals
+	# set shared lexicals
+
+	$additional_time = 0; # needed only for effect caching
+
+	$complete_caching_ref = sub 
+	{ 
+		# restore previous effects
+		pop_effect_chain($track);	
+
+		# possibly store comments
+		
+		disable_edits();
+	};
+
+	$track = $this_track; 
 
 	# maybe we are on an edit track or host alias track
 	
 	# so we will try to merge edits for a track that is the same
 	# name as the current bus, unless the current bus is
 	# a system bus
-	
-	$additional_time = 0; # needed only for effect caching
-
-	$track = $this_track; 
-
-	# try to improve it if we can
 
 	$track = $tn{$this_bus} 
 		unless grep{ $this_bus eq $_ } qw(Main Master Mixdown);
@@ -4753,37 +4784,7 @@ and version and try again. Aborting"), return
 
 	prepare_to_cache();
 	cache_engine_run();
-
-	# restore effects_chain
-	# make sure version, rw settings correct
-	# possibly store comments
-	
 }
-sub complete_merge_edits {
-	# uses shared lexicals
-	
-	my $name = $track->name;
-	my @files = grep{/$name/} new_files_were_recorded();
-	if (@files ){ 
-
-		# special handling for sub-bus mix track
-		
-		if ($track->rec_status eq 'REC')
-		{ 
-			$track->set(rw => 'MON');
-			$ui->global_version_buttons(); # recreate
-			$ui->refresh();
-		} 
-
-		# usual post-record handling is the default
-
-		else { post_rec_configure() }
-
-		reconfigure_engine();
-
-	} else { say "No files recorded. Merge edits operation failed!"; }
-}
-
 sub poll_cache_progress {
 
 	print ".";
@@ -4806,8 +4807,8 @@ sub stop_polling_cache_progress {
 	$event_id{poll_engine} = undef; 
 	$ui->reset_engine_mode_color_display();
 	complete_caching();
-}
 
+}
 } # end shared lexicals for cache_track and merge_edits
 
 sub uncache_track { 
@@ -5519,6 +5520,38 @@ sub apply_fades {
 	map{ ::Fade::refresh_fade_controller($_) }
 	grep{$_->{fader} }  # only if already exists
 	@tracks
+}
+sub disable_edits {
+
+	# if we are on a host track, host alias or edit track
+	# the current bus will be the name of the host track
+	
+	my $host = $tn{$this_bus};
+	defined $host or print($this_track->name,": edits not enabled.\n"), return 1;
+
+	# turn off bus (and all edit tracks)
+	
+	my $bus = $::Bus::by_name{$this_bus};
+	$bus->set(rw => 'OFF');
+
+	# we will use information from current edit
+	# if defined
+	
+	my $edit = $this_edit;
+
+	# reset host track, copying back source settings if possible
+	
+	$host->set(
+		rw 			=> 'MON',
+		rec_defeat	=> 0,
+		source_type => (defined $edit 
+			? $edit->edit_track->source_type
+			: 'soundcard'),
+		source_id 	=> (defined $edit 
+			? $edit->edit_track->source_id
+			: 1),
+	);
+	end_edit_mode();
 }
 	
 

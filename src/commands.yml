@@ -270,7 +270,7 @@ pan_back:
 show_tracks:
   type: track 
   short: show tracks list_tracks lt
-  what: show status of all tracks
+  what: show track status
 show_tracks_all:
   type: track
   short: sta

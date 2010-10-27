@@ -5313,7 +5313,13 @@ sub end_track_edit_magic {
 	$::tn{$name}->set( @vals );
 	$this_edit->bus->set(rw => 'OFF');
 }
-sub end_edit_mode  	{ $edit_mode = 0; $regenerate_setup++ }
+sub end_edit_mode  	{ 
+
+	# regenerate fades
+	
+	$edit_mode = 0; 
+	$regenerate_setup++ 
+}
 sub set_edit_mode 	{ $edit_mode = edit_mode_conditions() ?  1 : 0 }
 sub edit_mode		{ $edit_mode }
 sub edit_mode_conditions {        

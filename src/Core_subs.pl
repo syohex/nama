@@ -5602,6 +5602,4 @@ sub disable_edits {
 	);
 	end_edit_mode();
 }
-	
-
 ### end

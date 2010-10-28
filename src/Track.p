@@ -757,6 +757,30 @@ sub edits_enabled {
 	and $track->rec_defeat
 	and $track->source_type eq 'bus'
 }
+
+sub busify {
+	my $track = shift;
+	my $name = $track->name;
+
+	# create the bus
+	
+	::SubBus->new( 
+		name => $name, 
+		send_type => 'bus',
+		send_id	 => $name,
+	);
+
+	# convert host track to mix track
+	
+	my @vals = (is_mix_track => 1,
+				rec_defeat 	=> 1,
+				rw => 'REC',
+				);
+
+	$track->set( @vals );
+}
+
+
 =comment
 sub this_edit {
 	my $track = shift;

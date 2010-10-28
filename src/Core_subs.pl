@@ -3709,7 +3709,6 @@ sub all {
 sub pager {
 	$debug2 and print "&pager\n";
 	my @output = @_;
-#	my ($screen_lines, $columns) = split " ", qx(stty size);
 	my ($screen_lines, $columns) = $term->get_screen_size();
 	my $line_count = 0;
 	map{ $line_count += $_ =~ tr(\n)(\n) } @output;

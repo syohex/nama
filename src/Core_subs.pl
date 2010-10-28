@@ -786,8 +786,8 @@ sub create_system_buses {
 	delete $is_system_bus{Main}; # because we want to display it
 	map{ ::Bus->new(name => $_ ) } @system_buses;
 
-	$main = $::Bus::by_name{Main};
-	$null = $::Bus::by_name{null};
+	$main = $bn{Main};
+	$null = $bn{null};
 }
 
 ## track and wav file handling
@@ -840,7 +840,7 @@ sub add_track {
 	$track->source($ch_r) if $ch_r;
 #		$track->send($ch_m) if $ch_m;
 
-	my $group = $::Bus::by_name{$track->group}; 
+	my $group = $bn{$track->group}; 
 	command_process('for mon; mon') if $preview and $group->rw eq 'MON';
 	$group->set(rw => 'REC') unless $track->target; # not if is alias
 
@@ -3834,10 +3834,8 @@ sub ecasound_select_chain {
 }
 sub set_current_bus {
 	my $track = shift || ($this_track ||= $tn{Master});
-	if( $track->name =~ /Master|Mixdown/)
-		 { $this_bus = 'Main' }
-	elsif( $::Bus::by_name{$track->name} and $track->source_type eq 'bus' )
-		 { $this_bus = $track->name }
+	if( $track->name =~ /Master|Mixdown/){ $this_bus = 'Main' }
+	elsif( $bn{$track->name} ){$this_bus = $track->name }
 	else { $this_bus = $track->group }
 }
 sub eval_perl {
@@ -3850,7 +3848,7 @@ sub eval_perl {
 
 sub is_bunch {
 	my $name = shift;
-	$::Bus::by_name{$name} or $bunch{$name}
+	$bn{$name} or $bunch{$name}
 }
 my %set_stat = ( 
 				 (map{ $_ => 'rw' } qw(rec mon off) ), 
@@ -3860,11 +3858,11 @@ my %set_stat = (
 sub bunch_tracks {
 	my $bunchy = shift;
 	my @tracks;
-	if ( my $bus = $::Bus::by_name{$bunchy}){
+	if ( my $bus = $bn{$bunchy}){
 		@tracks = $bus->tracks;
 	} elsif ( $bunchy eq 'bus' ){
 		$debug and print "special bunch: bus\n";
-		@tracks = grep{ ! $::Bus::by_name{$_} } $::Bus::by_name{$this_bus}->tracks;
+		@tracks = grep{ ! $bn{$_} } $bn{$this_bus}->tracks;
 	} elsif ($bunchy =~ /\s/  # multiple identifiers
 		or $tn{$bunchy} 
 		or $bunchy !~ /\D/ and $ti{$bunchy}){ 
@@ -3881,7 +3879,7 @@ sub bunch_tracks {
 		$debug and say "special bunch: $bunchy, method: $method";
 		$bunchy = uc $bunchy;
 		@tracks = grep{$tn{$_}->$method eq $bunchy} 
-				$::Bus::by_name{$this_bus}->tracks
+				$bn{$this_bus}->tracks
 	} elsif ( $bunch{$bunchy} and @tracks = @{$bunch{$bunchy}}  ) {
 		$debug and print "bunch tracks: @tracks\n";
 	} else { say "$bunchy: no matching bunch identifier found" }
@@ -3977,7 +3975,7 @@ sub automix {
 	
 	my @tracks = grep{
 					$tn{$_}->rec_status eq 'MON' or
-					$::Bus::by_name{$_} and $tn{$_}->rec_status eq 'REC'
+					$bn{$_} and $tn{$_}->rec_status eq 'REC'
 				 } $main->tracks;
 
 	say "tracks: @tracks";
@@ -4349,7 +4347,7 @@ sub add_send_bus {
 	
 	print "name: $name: dest_type: $dest_type dest_id: $dest_id\n";
 
-	if ($::Bus::by_name{$name}){
+	if ($bn{$name}){
 		say qq(monitor bus "$name" already exists. Updating with new tracks.");
 
 	} else {
@@ -4401,7 +4399,7 @@ sub dest_type {
 sub update_send_bus {
 	my $name = shift;
 		add_send_bus( $name, 
-						 $::Bus::by_name{$name}->send_id),
+						 $bn{$name}->send_id),
 						 "dummy",
 }
 
@@ -4589,7 +4587,7 @@ sub cache_track { # launch subparts if conditions are met
 	say $track->name, ": preparing to cache.";
 	
 	# check conditions for sub-bus mix track
-	if( $::Bus::by_name{$track->name} ){ 
+	if( $bn{$track->name} ){ 
 		$track->rec_status ne 'OFF' or say(
 			"mix track ",$track->name, ": status is OFF. Aborting."), return;
 
@@ -4601,7 +4599,7 @@ sub cache_track { # launch subparts if conditions are met
 	say($track->name, ": no effects to cache!  Skipping."), return 
 		unless 	$track->fancy_ops 
 				or $track->has_insert
-				or $::Bus::by_name{$track->name};
+				or $bn{$track->name};
 
 	$complete_caching_ref = \&update_cache_map;
 	prepare_to_cache();
@@ -5034,7 +5032,7 @@ sub new_project_template {
 	
 	# Buses needn't set version info either
 	
-	map{$_->set(version => undef)} values %::Bus::by_name;
+	map{$_->set(version => undef)} values %bn;
 	
 	# create template directory if necessary
 	
@@ -5522,7 +5520,7 @@ sub import_audio {
 
 	# check that track is audible
 	
-	my $bus = $::Bus::by_name{$this_track->group};
+	my $bus = $bn{$this_track->group};
 
 	# set MON status unless track _is_ audible
 	

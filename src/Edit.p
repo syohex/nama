@@ -185,10 +185,9 @@ sub remove_fades {
 	$edit->set(fades => []);
 }
 
-sub host_alias_track{ $::tn{$_[0]->host_alias} }
-sub host	 		{ $::tn{$_[0]->host_track} }
-sub edit_track 		{ $::tn{$_[0]->edit_name} }
-sub bus { $::Bus::by_name{$_[0]->host_track} }
+sub host_alias_track { $::tn{$_[0]->host_alias} }
+sub edit_track 		 { $::tn{$_[0]->edit_name} }
+sub bus { $::bn{$_[0]->host_track} }
 
 # utility routines
 1;

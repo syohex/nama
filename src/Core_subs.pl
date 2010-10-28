@@ -5540,6 +5540,15 @@ sub list_edits {
 		values %::Edit::by_name;
 	pager(@edit_data);
 }
+sub explode_track {
+	my $track = shift;
+	
+	# quit if I am already a mix track
+
+	say($track->name,": I am already a mix track. I cannot explode!"),return
+		if $track->source_type eq 'bus' or $bn{$track->name};
+
+}	
 
 sub select_edit {
 	my $n = shift;

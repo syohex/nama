@@ -828,4 +828,7 @@ disable_edits:
   short: ded
   what: disable editing sub-bus, restore standard track behavior
   parameters: none
+explode_track:
+  type: track
+  what: make track into a sub-bus, with one track for each version
 ...

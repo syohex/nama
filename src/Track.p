@@ -887,6 +887,13 @@ sub playat_time {
 	$_[0]->play_start_time
 }
 }
+{
+package ::VersionTrack;
+our @ISA ='::Track';
+sub set_version {}
+sub rw { 'MON' }
+sub versions { [$_[0]->version] }
+}
 
 1;
 __END__

@@ -62,19 +62,11 @@ sub new {
 
 	my $name = $self->host_track;
 	my $host = $::tn{$name};
-<<<<<<< HEAD
-=======
 
-	# create bus and convert host track to mix track
+	# convert host track to mix track
 	
 	$host->busify;
->>>>>>> - Track new method: $track->busify
-
-	# get the current version of host_track
-
-	# host track will become mix track of a sub-bus
 	
-<<<<<<< HEAD
 	# create the bus
 	
 	::SubBus->new( 
@@ -83,24 +75,12 @@ sub new {
 		send_id	 	=> $host->name,
 	);
 
-	# prepare host track to be mix track
-	
-	my @vals = (
-		rec_defeat 	=> 1,
-		rw 			=> 'REC',
-	);
-
-	$host->set( @vals );
-
-=======
->>>>>>> - Track new method: $track->busify
 	# create host track alias if necessary
 
 	# To ensure that users don't get into trouble, we would like to 
 	# restrict this track:
 	#  - version number must *not* be allowed to change
-	#  - rw setting must be fixed to 'MON'
-	#
+	#  - rw setting must be fixed to 'MON' #
 	#  The easiest way may be to subclass the 'set' routine
 	
 	my $host_track_alias = $::tn{$self->host_alias} // 

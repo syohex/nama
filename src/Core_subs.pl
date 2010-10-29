@@ -385,7 +385,7 @@ sub init_ecasound_socket {
 	); 
 	die "Could not create socket: $!\n" unless $sock; 
 }
-
+}
 sub ecasound_pid {
 	my ($ps) = grep{ /ecasound/ and /server/ } qx(ps ax);
 	my ($pid) = split " ", $ps; 

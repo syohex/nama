@@ -772,8 +772,7 @@ sub busify {
 
 	# convert host track to mix track
 	
-	my @vals = (is_mix_track => 1,
-				rec_defeat 	=> 1,
+	my @vals = ( rec_defeat 	=> 1,
 				rw => 'REC',
 				);
 

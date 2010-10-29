@@ -385,7 +385,7 @@ sub init_ecasound_socket {
 	); 
 	die "Could not create socket: $!\n" unless $sock; 
 }
-}
+
 sub ecasound_pid {
 	my ($ps) = grep{ /ecasound/ and /server/ } qx(ps ax);
 	my ($pid) = split " ", $ps; 
@@ -421,16 +421,7 @@ type: $type
 full return value: $return_value);
 	die "illegal return value, stopped" ;
 
-	$return_value == 256 or do {
-		say "ECI command: $cmd";
-		say "Ecasound reply (unparsed, 256 bytes max): ", substr($buf,0,256); # first 256 characters
-		say "Parsed results";
-		say qq(return value: $return_value
-length: $length
-type: $type
-reply: $reply);
-		die "illegal return value, stopped" ;
-	};
+}
 	$reply =~ s/\s+$//; 
 
 	given($type){

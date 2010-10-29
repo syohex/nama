@@ -269,12 +269,12 @@ pan_back:
   parameters: none
 show_tracks:
   type: track 
-  short: show tracks list_tracks lt
+  short: show lt
   what: show track status
 show_tracks_all:
   type: track
-  short: sta
-  what: show status of all tracks, including hidden tracks
+  short: sha showa 
+  what: show status of all tracks, visible and hidden
 show_bus_tracks:
   type: track 
   short: shb

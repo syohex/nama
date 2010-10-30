@@ -1714,6 +1714,9 @@ sub connect_jack_ports_list {
 		$user_plumbing =~ s/;[# ]*$plumbing_tag.*//gs;
 	
 		open $fh, ">", jack_plumbing_conf();
+	
+		print $fh $user_plumbing, $plumbing_header;
+		
 	}
 	map{  
 		my $track = $_; 
@@ -1747,7 +1750,7 @@ sub connect_jack_ports_list {
 
 					my $ecasound_port = $dest .  $ecasound_port_number;
 					my $config_line = join " ", 'connect', quote($port), quote($ecasound_port);
-					print $fh "($config_line)\n";
+					$debug and print $fh "($config_line)\n";
 
 				} else { # fall back to jack_connect
 					# quote port in case it contains spaces

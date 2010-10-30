@@ -4764,25 +4764,16 @@ sub update_cache_map {
 
 sub post_cache_processing {
 
-		# only two differences in processing here
+		# only set to MON tracks that would otherwise remain
+		# in a REC status
 		#
-		# - regular track: set all buses  to MON
-		# - mix track:     set track only to MON
-		
+		# track:REC bus:MON -> keep current state
+		# track:REC bus:REC -> set track to MON
 
-		# special handling for sub-bus mix track
-	
-		if ($track->rec_status eq 'REC')
-		{ 
-			$track->set(rw => 'MON');
-			$ui->global_version_buttons(); # recreate
-			$ui->refresh();
-		} 
+		$track->set(rw => 'MON') if $track->rec_status eq 'REC';
 
-		# usual post-record handling is the default
-
-		else { post_rec_configure() }
-
+		$ui->global_version_buttons(); # recreate
+		$ui->refresh();
 		reconfigure_engine();
 		revise_prompt("default"); 
 

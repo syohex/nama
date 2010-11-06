@@ -617,20 +617,6 @@ sub set_off {
 }
 sub is_mix_track { $_[0]->source_type eq 'bus' }
 
-=comment
-mix
-self bus      brothers
-REC  MON 
-MON  OFF
-OFF  OFF
-
-member
-REC  REC      REC->MON
-MON  OFF->MON REC/MON->OFF
-OFF  --       --
-
-=cut
-	
 sub set_rw {
 	my ($track, $setting) = @_;
 	#my $already = $track->rw eq $setting ? " already" : "";

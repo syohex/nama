@@ -142,7 +142,7 @@ sub show_status {
 sub placeholder { 
 	my $val = shift;
 	return $val if defined $val;
-	$config->{use_placeholders} ? q(--) : q() 
+	$config->use_placeholders ? q(--) : q() 
 }
 
 sub show_inserts {
@@ -381,8 +381,8 @@ sub t_load_project {
 	save_state();
 	load_project( name => $newname );
 	print "loaded project: $project->{name}\n";
-	$debug and print "hook: $config->{execute_on_project_load}\n";
-	::command_process($config->{execute_on_project_load});
+	$debug and say "hook: ",$config->execute_on_project_load;
+	::command_process($config->execute_on_project_load);
 		
 }
 

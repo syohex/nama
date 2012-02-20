@@ -1067,7 +1067,7 @@ sub get_ladspa_hints{
 				next if $p =~ /^\s*$/;
 				$p =~ s/\.{3}/10/ if $p =~ /amplitude|gain/i;
 				$p =~ s/\.{3}/60/ if $p =~ /delay|decay/i;
-				$p =~ s(\.{3})($config->{sample_rate}/2) if $p =~ /frequency/i;
+				$p =~ s(\.{3})($config->sample_rate/2) if $p =~ /frequency/i;
 				$p =~ /$paramre/;
 				my ($name, $rest) = ($1, $2);
 				my ($dir, $type, $range, $default, $hint) = 
@@ -1119,7 +1119,7 @@ sub srate_val {
 			(e[+-]?\d+)?  	# optional exponent
 	)/ix;					# case insensitive e/E
 	my ($val) = $input =~ /$val_re/; #  or carp "no value found in input: $input\n";
-	$val * ( $input =~ /srate/ ? $config->{sample_rate} : 1 )
+	$val * ( $input =~ /srate/ ? $config->sample_rate : 1 )
 }
 	
 sub range {

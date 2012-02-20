@@ -2,7 +2,7 @@ sub main {
 #	setup_grammar(); 		# executes directly in body
 	process_options(); 		# Option_subs.pm
 	initialize_interfaces();# Initialize_subs.pm
-	command_process($config->{execute_on_project_load});
+	command_process($config->execute_on_project_load);
 	reconfigure_engine();	# Engine_setup_subs.pm
 	command_process($config->{opts}->{X});
 	$ui->loop;
@@ -292,7 +292,7 @@ sub cleanup_exit {
 			} (2,2,9)
 	} @{$engine->{pids}};
  	#kill 15, ecasound_pid() if $engine->{socket};  	
-	close_midish() if $config->{use_midish};
+	close_midish() if $config->use_midish;
 	$text->{term}->rl_deprep_terminal() if defined $text->{term};
 	exit; 
 }

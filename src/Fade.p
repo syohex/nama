@@ -261,11 +261,11 @@ sub spec_to_pairs {
 	
 	if ($op eq 'eadb'){
 		if ( $type eq 'out' ){
-			$cutpos = $from + $config->{fade_time1_fraction} * ($to - $from);
-			push @pairs, ($from, 1, $cutpos, $config->{fade_down_fraction}, $to, 0);
+			$cutpos = $from + $config->fade_time1_fraction * ($to - $from);
+			push @pairs, ($from, 1, $cutpos, $config->fade_down_fraction, $to, 0);
 		} elsif( $type eq 'in' ){
-			$cutpos = $from + $config->{fade_time2_fraction} * ($to - $from);
-			push @pairs, ($from, 0, $cutpos, $config->{fade_down_fraction}, $to, 1);
+			$cutpos = $from + $config->fade_time2_fraction * ($to - $from);
+			push @pairs, ($from, 0, $cutpos, $config->fade_down_fraction, $to, 1);
 		}
 	}
 
@@ -330,7 +330,7 @@ sub add_fader {
 		$id = ::add_effect({
 				before 	=> $first_effect, 
 				track	=> $track,
-				type	=> $config->{fader_op}, 
+				type	=> $config->fader_op, 
 				values	=> [0],
 		});
 		$track->set(fader => $id);

@@ -245,7 +245,7 @@ $mastering->{track_names} = [ qw(Eq Low Mid High Boost) ];
 
 $mode->{mastering} = 0;
 
-init_memoize() if $config->{memoize};
+init_memoize() if $config->memoize;
 
 sub setup_grammar { }
 

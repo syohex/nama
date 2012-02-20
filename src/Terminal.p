@@ -19,7 +19,7 @@ sub initialize_terminal {
 	$text->{term_attribs} = $text->{term}->Attribs;
 	$text->{term_attribs}->{attempted_completion_function} = \&complete;
 	$text->{term_attribs}->{already_prompted} = 1;
-	detect_spacebar(); # if $config->{press_space_to_start};
+	detect_spacebar(); # if $config->press_space_to_start;
 
 	revise_prompt();
 	# handle Control-C from terminal
@@ -56,7 +56,7 @@ sub check_for_spacebar_hit {
 }
 sub detect_spacebar {
 	$engine->{events}->{stdin} = undef; # clean up after get_edit_mark()
-	check_for_spacebar_hit() # if $config->{press_space_to_start};
+	check_for_spacebar_hit() # if $config->press_space_to_start;
 }
 
 sub pager {
@@ -68,7 +68,7 @@ sub pager {
 	if 
 	( 
 		(ref $ui) =~ /Text/  # pager interferes with GUI
-		and $config->{use_pager} 
+		and $config->use_pager 
 		and $line_count > $screen_lines - 2
 	) { 
 		my $fh = File::Temp->new();
@@ -136,7 +136,7 @@ sub load_keywords {
 	push @{$text->{keywords}}, grep{$_} map{split " ", $text->{commands}->{$_}->{short}} @{$text->{keywords}};
 	push @{$text->{keywords}}, keys %{$text->{iam}};
 	push @{$text->{keywords}}, keys %{$fx_cache->{partial_label_to_full}};
-	push @{$text->{keywords}}, keys %{$midi->{keywords}} if $config->{use_midish};
+	push @{$text->{keywords}}, keys %{$midi->{keywords}} if $config->use_midish;
 	push @{$text->{keywords}}, "Audio::Nama::";
 }
 

@@ -92,7 +92,7 @@ sub initialize_interfaces {
 
 	# we will start jack.plumbing only when we need it
 	
-	if(		$config->{use_jack_plumbing} 
+	if(		$config->use_jack_plumbing 
 	and $jack->{jackd_running} 
 	and process_is_running('jack.plumbing')
 	){
@@ -117,7 +117,7 @@ exit;
 		else { say "Stopped." }
 	}
 		
-	start_midish() if $config->{use_midish};
+	start_midish() if $config->use_midish;
 
 	initialize_terminal() unless $config->{opts}->{T};
 
@@ -157,8 +157,8 @@ sub select_ecasound_interface {
 	} else { 
 
 		no warnings qw(redefine);
-		launch_ecasound_server($config->{engine_tcp_port});
-		init_ecasound_socket($config->{engine_tcp_port}); 
+		launch_ecasound_server($config->engine_tcp_port);
+		init_ecasound_socket($config->engine_tcp_port); 
 		*eval_iam = \&eval_iam_neteci;
 	}
 }

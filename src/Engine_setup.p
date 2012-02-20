@@ -49,7 +49,7 @@ sub reconfigure_engine {
 	# skip if command line option is set
 	return if $config->{opts}->{R};
 
-	return if $config->{disable_auto_reconfigure};
+	return if $config->disable_auto_reconfigure;
 
 	# don't disturb recording/mixing
 	return if ::ChainSetup::really_recording() and engine_running();
@@ -291,7 +291,7 @@ sub transport_status {
 	say "\nNow at: ", current_position();
 	say "Engine is ". ( engine_running() ? "running." : "ready.");
 	say "\nPress SPACE to start or stop engine.\n"
-		if $config->{press_space_to_start};
+		if $config->press_space_to_start;
 }
 sub adjust_latency {
 
@@ -316,7 +316,7 @@ sub adjust_latency {
 	my $max;
 	map { $max = $_ if $_ > $max  } values %latency;
 	$debug and print "max: $max\n";
-	map { my $adjustment = ($max - $latency{$_}) / $config->{sampling_freq} * 1000;
+	map { my $adjustment = ($max - $latency{$_}) / $config->sampling_freq * 1000;
 			$debug and print "chain: $_, adjustment: $adjustment\n";
 			effect_update_copp_set($ti{$_}->latency, 2, $adjustment);
 			} keys %latency;

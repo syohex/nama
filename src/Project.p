@@ -80,7 +80,7 @@ sub initialize_project_data {
 	# $is_armed = 0;
 	
 	$setup->{_old_snapshot} = {};
-	$mode->{preview} = $config->{initial_mode};
+	$mode->{preview} = $config->initial_mode;
 	$mode->{mastering} = 0;
 	$project->{save_file_version_number} = 0; 
 	

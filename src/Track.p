@@ -189,7 +189,7 @@ sub current_wav {
 
 sub current_version {	
 	my $track = shift;
-	my $last = $config->{use_group_numbering} 
+	my $last = $config->use_group_numbering 
 					? ::Bus::overall_last()
 					: $track->last;
 	my $status = $track->rec_status;
@@ -760,14 +760,14 @@ sub import_audio  {
 		say "Use 'import_audio <path> <frequency>' if possible.";
 		return 
 	}
-	my $desired_frequency = freq( $config->{raw_to_disk_format} );
+	my $desired_frequency = freq( $config->raw_to_disk_format );
 	my $destination = join_path(::this_wav_dir(),$track->name."_$version.wav");
 	#say "destination: $destination";
 	if ( $frequency == $desired_frequency and $path =~ /.wav$/i){
 		say "copying $path to $destination";
 		copy($path, $destination) or die "copy failed: $!";
 	} else {	
-		my $format = ::signal_format($config->{raw_to_disk_format}, $width);
+		my $format = ::signal_format($config->raw_to_disk_format, $width);
 		say "importing $path as $destination, converting to $format";
 		my $cmd = qq(ecasound -f:$format -i:resample-hq,$frequency,"$path" -o:$destination);
 		#say $cmd;
@@ -1081,7 +1081,7 @@ sub add_volume_control {
 	
 	my $vol_id = cop_add({
 				chain => $n, 
-				type => $config->{volume_control_operator},
+				type => $config->volume_control_operator,
 				cop_id => $ti{$n}->vol, # often undefined
 				});
 	

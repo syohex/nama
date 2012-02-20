@@ -122,7 +122,7 @@ sub connect_jack_ports_list {
 
 	sleeper(0.3); # extra time for ecasound engine to register JACK ports
 
-	if( $config->{use_jack_plumbing} )
+	if( $config->use_jack_plumbing )
 	{
 
 		# write config file
@@ -195,7 +195,7 @@ sub kill_jack_plumbing {
 }
 sub start_jack_plumbing {
 	
-	if ( 	$config->{use_jack_plumbing}				# not disabled in namarc
+	if ( 	$config->use_jack_plumbing			# not disabled in namarc
 			and ! ($config->{opts}->{J} or $config->{opts}->{A})	# we are not testing   
 
 	){ system('jack.plumbing >/dev/null 2>&1 &') }

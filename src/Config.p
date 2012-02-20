@@ -31,6 +31,8 @@ sub global_config {
 	# 2. .namarc in the current project directory, i.e. ~/nama/untitled/.namarc
 	# 3. .namarc in the home directory, i.e. ~/.namarc
 	# 4. .namarc in the project root directory, i.e. ~/nama/.namarc
+	#
+	# use hash keys: we don't allow project-specific override
 	if( $config->{opts}->{f} ){
 		print("reading config file $config->{opts}->{f}\n");
 		return read_file($config->{opts}->{f});
@@ -75,6 +77,8 @@ sub read_config {
 		class => '::',
 		var_map => 1,
 	);
+
+	# access as hash; we are setting values 
 	$config->{root_dir} = $config->{opts}->{d} if $config->{opts}->{d};
 	$config->{root_dir} = expand_tilde($config->{root_dir});
 	$config->{sampling_freq} = $cfg{abbreviations}{frequency};

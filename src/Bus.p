@@ -81,6 +81,8 @@ sub forces { $forces{ $_[0]->rw } }
 ## class methods
 
 # sub buses, and Main
+#
+# _is_system_bus does not work as method call
 sub all { grep{ ! $::config->{_is_system_bus}->{$_->name} } values %by_name };
 
 sub overall_last { 

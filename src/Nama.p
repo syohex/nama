@@ -169,6 +169,14 @@ $gui->{_save_id} = "State";
 $gui->{_seek_unit} = 1;
 $gui->{marks} = {};
 
+#########################################################################3
+# $config - system constants 
+#########################################################################3
+
+# below are default values 
+#    - some are overriden by .namarc
+#    - possible to set/unset project-specific values with 'config/unset' commands
+
 $config = bless {
 	root_dir 						=> join_path( $ENV{HOME}, "nama"),
 	soundcard_channels 				=> 10,
@@ -190,6 +198,8 @@ $config = bless {
 	serialize_formats               => 'json',
 }, '::Config';
 
+# methods for $config object
+
 { package ::Config;
 use Carp;
 use ::Globals qw($debug :singletons);
@@ -206,6 +216,15 @@ sub serialize_formats {
 		  || $_[0]->{serialize_formats}
 		)
 }
+
+# allow any field $config->fieldname to be overriden by a (user set) value
+# in $project->{config}->{fieldname}
+#
+# Notes
+# + $config->{fieldname} will not be overridden (only method call)
+# + some hash calls remain in source code: root_dir, devices, opts
+# TODO: document un-overrideable fields
+
 our $AUTOLOAD;
 sub AUTOLOAD {
 	my $self = shift;
@@ -221,6 +240,7 @@ sub AUTOLOAD {
 	my ($var) = map  { ::Assign::var_map()->{$_} } 
 				grep { /^.$call$/ } 
 				keys %{::Assign::var_map()};
+	carp("$_: var_map entry not found\n"), return unless $var;
 	my $result = eval $var;
 	croak "error: $@" if $@;
 	return $result;

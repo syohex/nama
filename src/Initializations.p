@@ -271,11 +271,8 @@ sub initialize_interfaces {
 	
 	select_ecasound_interface(); # Net-ECI
 		
-	$this_engine = ::Engine->new(
-		name => 'Nama', 
-		port => $config->{engine_tcp_port},
-		jack_transport_mode => 'send',
-	);
+	my $engines = $config->{engines};
+	$this_engine = ::Engine->new( name => $_, %{$engines->{$_}}) for keys $engines;
 
 	start_osc_listener($config->{osc_listener_port}) 
 		if $config->{osc_listener_port} 

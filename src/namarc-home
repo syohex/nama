@@ -56,9 +56,9 @@ ecasound_buffersize:
     default: 256
   nonrealtime:
     jack_period_multiple: 8
-    default: 1024
+    default: 256
 ecasound_globals:
-  common: -z:mixmode,sum -G:jack,Nama,send
+  common: -z:mixmode,sum
   realtime: -z:db,100000 -z:nointbuf 
   nonrealtime: -z:nodb -z:intbuf
 
@@ -70,7 +70,8 @@ use_group_numbering: 1
 
 press_space_to_start_transport: 1
 
-#execute_on_project_load: eval $this_engine->{events}->{poll_jack} = undef;
+#execute_on_project_load: doodle; eval reconfigure_engine(); start_transport()
+#eval $engine->{events}->{poll_jack} = undef;
 
 quietly_remove_tracks: 0
 
@@ -105,6 +106,16 @@ beep_command: beep -f 350 -l 700
 
 hotkey_beep: beep -f 250 -l 200
 
+enforce_channel_bounds: 1
+
+osc_listener_port: 57120
+remote_control_port: 57121
+# ecasound_tcp_port: 2868
+#initial_mode: doodle
+#eager: 1
+fade_length: 0.2
+fade_resolution: 60
+
 alias:
   command:
     mbs: move_to_bus
@@ -112,5 +123,21 @@ alias:
     djp: disable_jack_polling
   effect:
     reverb: gverb
+
+engines:
+  Nama-live:
+    port: 2868
+    on_reconfigure: run
+    on_exit: kill
+    jack_transport_mode: notransport
+    include_routes: all
+    exclude_routes: fileio
+  Nama-file:
+    port: 2869
+    on_reconfigure: connect
+    on_exit: kill
+    include_routes: fileio
+    jack_transport_mode: send
+
 # end
 

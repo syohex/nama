@@ -126,7 +126,7 @@ sub generate_setup_try {
 	
 	$extra_setup_code->($g) if $extra_setup_code;
 
-	prune_graph();
+	#prune_graph();
 	logpkg('debug',"Graph after pruning unterminated branches:\n$g");
 
 	::Graph::expand_graph($g); 

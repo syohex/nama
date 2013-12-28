@@ -125,25 +125,25 @@ alias:
     reverb: gverb
 
 engines:
-  Nama:
-    port: 2868
-    on_reconfigure: connect
-    on_exit: kill
-    jack_transport_mode: send
-    include_routes: all
-#   Nama-live:
+#   Nama:
 #     port: 2868
-#     on_reconfigure: run
-#     on_exit: kill
-#     jack_transport_mode: notransport
-#     include_routes: all
-#     exclude_routes: fileio
-#   Nama-file:
-#     port: 2869
 #     on_reconfigure: connect
 #     on_exit: kill
-#     include_routes: fileio
 #     jack_transport_mode: send
+#     include_routes: all
+  Nama-live:
+    port: 2868
+    on_reconfigure: run
+    on_exit: kill
+    jack_transport_mode: notransport
+    include_routes: all
+    exclude_routes: fileio
+  Nama-file:
+    port: 2869
+    on_reconfigure: connect
+    on_exit: kill
+    include_routes: fileio
+    jack_transport_mode: send
 # 
 # end
 

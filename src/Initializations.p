@@ -82,7 +82,7 @@ sub definitions {
 		}
 		sub chain_setup {
 			my $self = shift;
-			my $name = defined $::this_engine ?  $::this_engine->name : 'Setup';
+			my $name = (ref $::this_engine ) =~ /Engine/ ?  $::this_engine->name : 'Setup';
 			::join_path(::project_dir(), "$name.ecs")
 		}
 		sub AUTOLOAD {
@@ -272,7 +272,7 @@ sub initialize_interfaces {
 	select_ecasound_interface(); # Net-ECI
 		
 	my $engines = $config->{engines};
-	$this_engine = ::Engine->new( name => $_, %{$engines->{$_}}) for keys $engines;
+	$this_engine = ::Engine->new( name => $_, %{$engines->{$_}}) for keys %$engines;
 
 	start_osc_listener($config->{osc_listener_port}) 
 		if $config->{osc_listener_port} 

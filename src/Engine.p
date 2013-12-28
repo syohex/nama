@@ -89,6 +89,14 @@ sub launch_ecasound_server {
  	system("$command $redirect") == 0 or carp "system $command failed: $?\n";
 	sleep 1;
 }
+sub wants_file_routes {   $_[0]->include_routes eq 'fileio' }
+sub wants_live_routes { ! $_[0]->wants_file_routes	        }
+	
+# Utility routines
+sub is_one_or_none { 
+	my @k = keys %{$::config->{engines}}; 
+	scalar @k == 1 or scalar @k == 0
+}
 1
 
 __END__

@@ -229,7 +229,10 @@ sub process_routing_graph {
 	logsub("&process_routing_graph");
 
 	# generate a set of IO objects from edges
-	@io = map{ dispatch($_) } $g->edges;
+	
+	# separate routes for live and fileio routes
+	
+	@io = map{ dispatch($_) } grep{ is_wanted_route($_) } $g->edges;
 	
 	logpkg('debug', sub{ join "\n",map $_->dump, @io });
 
@@ -270,6 +273,16 @@ sub process_routing_graph {
 	@post_input = sort by_index map{ "-a:$_ $post_input{$_}"} keys %post_input;
 	@pre_output = sort by_index map{ "-a:$_ $pre_output{$_}"} keys %pre_output;
 	@input_chains + @output_chains # to sense empty chain setup
+}
+sub is_file_route { 
+	my ($from,$to) = @{shift()}; 
+	$from eq 'wav_in' or $to eq 'wav_out'
+}
+sub is_wanted_route {
+	my $edge = shift;
+	::Engine::is_one_or_none() 
+	or is_file_route($edge) and $::this_engine->wants_file_routes()
+	# true if $edge is a live route and engine wants live routes
 }
 { my ($m,$n,$o,$p,$q,$r);
 sub by_chain {

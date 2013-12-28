@@ -230,7 +230,6 @@ sub rec_status {
 		or $track->rw eq 'OFF'
 		or $mode->doodle and ! $mode->eager and $track->rw eq 'REC' and 
 			$setup->{tracks_with_duplicate_inputs}->{$track->name}
-		or $track->engine_group ne $::this_engine->name
 	){ 	return			  'OFF' }
 
 	# having reached here, we know $bus->rw and $track->rw are REC or PLAY
@@ -1054,7 +1053,6 @@ our @ISA = '::SimpleTrack';
 
 sub rec_status{
 	my $track = shift;
- 	return 'OFF' if $track->engine_group ne $this_engine->name;
 	$mode->{mastering} ? 'MON' :  'OFF';
 }
 sub source_status {}

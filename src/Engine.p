@@ -22,6 +22,10 @@ use ::Object qw(
 				buffersize
 				on_reconfigure
     			on_exit
+    			on_reconfigure
+    			on_exit
+    			include_routes
+    			exclude_routes
 				 );
 
 initialize();

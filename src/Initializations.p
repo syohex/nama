@@ -394,6 +394,10 @@ sub start_remote_watcher {
 sub remove_remote_watcher {
     undef $this_engine->{events}->{remote_control};
 }
+sub update_prompt {
+	revise_prompt();
+	print prompt();
+}
 sub process_remote_command {
     if ( ! $is_connected_remote++ ){
         pager_newline("making connection");
@@ -407,7 +411,7 @@ sub process_remote_command {
     eval {     
         $project->{remote_control_socket}->recv($input, $project->{remote_control_socket}->sockopt(SO_RCVBUF));
     };
-    $@ and throw("caught error: $@, resetting..."), reset_remote_control_socket(), revise_prompt(), return;
+    $@ and throw("caught error: $@, resetting..."), reset_remote_control_socket(), update_prompt(), return;
     logpkg('debug',"Got remote control socketput: $input");
 	process_command($input);
 	my $out;
@@ -417,8 +421,8 @@ sub process_remote_command {
     eval {
         $project->{remote_control_socket}->send($out);
     };
-    $@ and throw("caught error: $@, resetting..."), reset_remote_control_socket(), revise_prompt(), return;
-	revise_prompt();
+    $@ and throw("caught error: $@, resetting..."), reset_remote_control_socket(), update_prompt(), return;
+	update_prompt();
 }
 sub reset_remote_control_socket { 
     undef $is_connected_remote;

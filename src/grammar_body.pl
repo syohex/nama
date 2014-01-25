@@ -289,7 +289,7 @@ save_state: _save_state { ::git_snapshot('user save'); 1}
 get_state: _get_state save_target {
  	::load_project( 
  		name => $::project->{name},
- 		settings => $item{save_target}
+ 		settings => $item{save_target} # .json file, git tag or branch name
  		); 1}
 # # reload project if given with no arguments
 # get_state: _get_state {

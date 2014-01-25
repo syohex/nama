@@ -14,8 +14,9 @@ sub git_tag_exists {
 
 # on command "get foo", Nama opens a branch name 'foo-branch', 
 # or returns to HEAD of existing branch 'foo-branch'
+# however "get master" returns to master branch
 
-sub tag_branch { "$_[0]-branch" }
+sub tag_branch { $_[0] . ($_[0] ne 'master' ? '-branch' : undef) }
 
 sub restore_state_from_vcs {
 	logsub("&restore_state_from_vcs");

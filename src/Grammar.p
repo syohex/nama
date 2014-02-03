@@ -130,13 +130,15 @@ sub process_command {
 		eval_iam("c-select ".$this_track->n);
 		eval_iam("cop-select ".  $FX->ecasound_effect_index);
 	}
+	# skip unconverted projects
+	return unless scalar %::Effect::by_id;
 
 	my $result = check_fx_consistency();
 	logpkg('logcluck',"Inconsistency found in effects data",
 		Dumper ($result)) if $result->{is_error};
 
 	my $current_count= 0;
-	map{ $current_count++ } keys %{$fx->{applied}};
+	$current_count++ for keys %::Effect::by_id;
 	if ($current_count < $total_effects_count){
 		pager("Total effects count: $current_count, change: ",
 			$current_count - $total_effects_count);
@@ -201,7 +203,7 @@ sub user_set_current_track {
 		
 }
 
-### allow commands to abbreviate Audio::Nama::Class as ::Class
+### allow commands to abbreviate Audio :: Nama :: Class as ::Class
 
 { my @namespace_abbreviations = qw(
 	Assign 
@@ -292,8 +294,8 @@ sub show_effect {
 	map
 	{ 	push @lines, parameter_info_padded($op_id, $_) 
 	 	
-	} (scalar @pnames .. (scalar @{$fx->{params}->{$op_id}} - 1)  )
-		if scalar @{$fx->{params}->{$op_id}} - scalar @pnames - 1; 
+	} (scalar @pnames .. (scalar @{$FX->params} - 1)  )
+		if scalar @{$FX->params} - scalar @pnames - 1; 
 	@lines
 }
 sub extended_name {
@@ -414,8 +416,8 @@ sub show_tracks_section {
             $_->rec_status_display,
 			placeholder($_->source_status),
 			placeholder($_->destination),
-			placeholder($fx->{params}->{$_->vol}->[0]),
-			placeholder($fx->{params}->{$_->pan}->[0]),
+			placeholder($_->vol_level),
+			placeholder($_->pan_level),
         } @tracks;
         
 	my $output = $^A;
@@ -554,7 +556,7 @@ sub destroy_current_wav {
 
 sub pan_check {
 	my ($track, $new_position) = @_;
-	my $current = $fx->{params}->{ $track->pan }->[0];
+	my $current = $track->pan_o->params->[0];
 	$track->set(old_pan_level => $current)
 		unless defined $track->old_pan_level;
 	effect_update_copp_set(
